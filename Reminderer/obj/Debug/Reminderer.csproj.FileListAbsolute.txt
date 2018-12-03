@@ -16,3 +16,6 @@ C:\Users\lyaky\source\repos\Reminderer\Reminderer\bin\Debug\Reminderer.pdb
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.exe
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.pdb
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csprojAssemblyReference.cache
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\bin\Debug\System.Data.SQLite.dll
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\bin\Debug\System.Data.SQLite.xml
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csproj.CopyComplete

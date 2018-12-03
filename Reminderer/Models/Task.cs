@@ -15,6 +15,11 @@ namespace Reminderer.Models
         private bool _shouldRepeat;
         private List<char> _repeatingDays;
 
+        public Task()
+        {
+            _repeatingDays = new List<char>();
+        }
+
         public string Description
         {
             get { return _description; }
