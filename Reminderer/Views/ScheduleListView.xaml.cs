@@ -1,6 +1,7 @@
 ﻿using Reminderer.Framework;
 using System;
 using System.Windows.Controls;
+using Reminderer.Windows;
 
 namespace Reminderer.Views.ScheduleListView
 {

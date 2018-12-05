@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\App.xaml
-3154645890
+42096695944
 
-18-1625320979
-14-1252133651
-MainWindow.xaml;Views\AddEditView\AddEditView.xaml;Views\ScheduleListView\ScheduleListView.xaml;
+19-1467534710
+721847922830
+MainWindow.xaml;Views\AddEditView.xaml;Views\ScheduleListView.xaml;Windows\NotificationWindow.xaml;
 
 False
 

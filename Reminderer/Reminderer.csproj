@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F9FD3F1C-20FB-4451-80D7-6C9E98D2CC61}</ProjectGuid>
+    <targetplatformversion>10.0</targetplatformversion>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Reminderer</RootNamespace>
     <AssemblyName>Reminderer</AssemblyName>
@@ -40,6 +41,9 @@
     <Reference Include="System.Data.SQLite">
       <HintPath>References\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -49,6 +53,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Windows.Data" />
+    <Reference Include="Windows.UI" />
+    <Reference Include="Windows.UI.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -61,14 +68,17 @@
     <Compile Include="Framework\DatabaseManager.cs" />
     <Compile Include="Framework\ISwitchable.cs" />
     <Compile Include="Framework\Switcher.cs" />
-    <Compile Include="Views\AddEditView\AddEditView.xaml.cs">
+    <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AddEditView\AddEditViewModel.cs" />
-    <Compile Include="Views\ScheduleListView\ScheduleListView.xaml.cs">
+    <Compile Include="Views\AddEditViewModel.cs" />
+    <Compile Include="Views\ScheduleListView.xaml.cs">
       <DependentUpon>ScheduleListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ScheduleListView\ScheduleListViewModel.cs" />
+    <Compile Include="Views\ScheduleListViewModel.cs" />
+    <Compile Include="Windows\NotificationWindow.xaml.cs">
+      <DependentUpon>NotificationWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,11 +92,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\AddEditView\AddEditView.xaml">
+    <Page Include="Views\AddEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ScheduleListView\ScheduleListView.xaml">
+    <Page Include="Views\ScheduleListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\NotificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
