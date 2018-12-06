@@ -21,3 +21,6 @@ C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csproj.Co
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csproj.CopyComplete
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.exe
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.pdb
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csprojAssemblyReference.cache
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\TimePicker.g.cs
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\TimePicker.baml

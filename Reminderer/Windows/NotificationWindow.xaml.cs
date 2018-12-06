@@ -31,6 +31,11 @@ namespace Reminderer.Windows
             this.Left = desktopWorkingArea.Right - this.Width;
             this.Top = desktopWorkingArea.Bottom - this.Height;
         }
+
+        private void closeButton_click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
 

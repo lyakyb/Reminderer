@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Reminderer.Views.ScheduleListView;
+using Reminderer.CustomControl;
 
 namespace Reminderer
 {
@@ -16,7 +17,9 @@ namespace Reminderer
         {
             InitializeComponent();
             Switcher.pageSwitcher = this;
-            Switcher.Switch(new ScheduleListView());
+            //Switcher.Switch(new ScheduleListView());
+            this.Content = new TimePicker();
+            this.Show();
 
         }
         public void Navigate(UserControl nextPage)

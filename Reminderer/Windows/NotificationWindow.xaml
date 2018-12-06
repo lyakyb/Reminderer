@@ -5,18 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reminderer.Windows"
         mc:Ignorable="d"
-        WindowStyle="None"
+        WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent"
         Title="NotificationWindow" Height="200" Width="340">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="110*" />
-            <RowDefinition Height="50*"  />
-            <RowDefinition Height="40*"  /> <!--Reserve-->
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="DescriptionTextblock" Grid.Row="0" Text="Description Text" />
-        <TextBlock x:Name="ExtraDetailTextblock" Grid.Row="1" Text="Extra Detail Text" />
+    <Border CornerRadius="5" BorderThickness="0">
+        <Border.Background>
+            <SolidColorBrush Color="Black" Opacity="0.7"/>
+        </Border.Background>
         <Grid>
-            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="80*"/>
+                <RowDefinition Height="40*"/>
+                <RowDefinition Height="30*"/>
+                <!--Reserve-->
+            </Grid.RowDefinitions>
+            <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 15 0" FontSize="15" FontWeight="ExtraBold" Background="Transparent" Content="X" BorderThickness="0" Foreground="White" Click="closeButton_click"/>
+            <TextBlock Margin="20 5 0 0" x:Name="DescriptionTextblock" Grid.Row="1" Text="Description Text" Foreground="WhiteSmoke" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBlock Margin="40 5 0 0" x:Name="ExtraDetailTextblock" Grid.Row="2" Text="Extra Detail Text" Foreground="LightGray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <Grid>
+
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
+    
 </Window>

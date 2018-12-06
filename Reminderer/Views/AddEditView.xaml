@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="400"
       >
     <Grid>
         <Grid.Resources>
@@ -20,21 +20,21 @@
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="300*"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="560*"/>
+            <RowDefinition Height="40*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="White" Margin="3,3,3,3" Height="350">
+        <Grid Grid.Row="0" Background="White" Margin="3,3,3,3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition Width="30*" MinWidth="30"/>
+                <ColumnDefinition Width="80*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30*"/>
-                <RowDefinition Height="30*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="30*"/>
-                <RowDefinition Height="30*"/>
-                <RowDefinition Height="30*"/>
+                <RowDefinition Height="112.5*"/>
+                <RowDefinition Height="112.5*"/>
+                <RowDefinition Height="187.5*"/>
+                <RowDefinition Height="112.5*"/>
+                <RowDefinition Height="112.5*"/>
+                <RowDefinition Height="112.5*"/>
             </Grid.RowDefinitions>
 
            
@@ -45,12 +45,36 @@
             <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" />
 
             <Label Content="Time" Grid.Row="2" Grid.Column="0"/>
-            <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" />
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="20*"/>
+                </Grid.ColumnDefinitions>
+                
+                <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                
+                <Label Grid.Row="1" Grid.Column="0" Content="H:" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <ListBox Grid.Row="1" Name="hourListBox"  Grid.Column="1" SelectionMode="Single" />
 
-            <Label Content="Want to be reminded?" Grid.Row="3" Grid.Column="0"/>
+                <Label Grid.Row="1" Grid.Column="2" Content="M:" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <ListBox Grid.Row="1" Name="minuteListBox"  Grid.Column="3" SelectionMode="Single" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                <Label Grid.Row="1" Grid.Column="4" Content="H: "/>
+                <TextBox Grid.Row="1" Grid.Column="5"/>
+            </Grid>
+
+            <Label Content="Remind?" Grid.Row="3" Grid.Column="0"/>
             <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" />
 
-            <Label Content="Should it repeat?" Grid.Row="4" Grid.Column="0"/>
+            <Label Content="Repeat?" Grid.Row="4" Grid.Column="0"/>
             <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" />
 
             <Label Content="Repeating Days" Grid.Row="5" Grid.Column="0"/>
