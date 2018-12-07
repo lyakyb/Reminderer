@@ -17,10 +17,7 @@ namespace Reminderer
         {
             InitializeComponent();
             Switcher.pageSwitcher = this;
-            //Switcher.Switch(new ScheduleListView());
-            this.Content = new TimePicker();
-            this.Show();
-
+            Switcher.Switch(new ScheduleListView());
         }
         public void Navigate(UserControl nextPage)
         {

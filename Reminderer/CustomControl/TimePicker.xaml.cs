@@ -40,7 +40,7 @@ namespace Reminderer.CustomControl
             set
             {
                 _hourVal = value;
-                hourNumber.Content = _hourVal.ToString();
+                hourNumberText.Text = _hourVal.ToString();
             }
         }
 
@@ -50,8 +50,12 @@ namespace Reminderer.CustomControl
             set
             {
                 _minuteVal = value;
-                minuteNumber.Content = _minuteVal.ToString();
+                minuteNumberText.Text = _minuteVal.ToString();
             }
+        }
+
+        private void lostFocus(object sender, RoutedEventArgs e)
+        {
         }
 
         private void buttonPressed(object sender, RoutedEventArgs e)
@@ -61,24 +65,15 @@ namespace Reminderer.CustomControl
             {
                 _hourBtnFocused = true;
                 _minBtnFocused = false;
-                minuteButton.Background = Brushes.LightSlateGray;
-                minuteNumber.Background = Brushes.LightSlateGray;
-                hourButton.Background = Brushes.White;
-                hourNumber.Background = Brushes.White;
             }
             else if (sender == minuteButton || sender == minuteNumber)
             {
                 _hourBtnFocused = false;
                 _minBtnFocused = true;
-                minuteButton.Background = Brushes.White;
-                minuteNumber.Background = Brushes.White;
-                hourButton.Background = Brushes.LightSlateGray;
-                hourNumber.Background = Brushes.LightSlateGray;
             } else
             {
                 _hourBtnFocused = false;
                 _minBtnFocused = false;
-                minuteButton.Background = hourButton.Background = Brushes.White;
             }
         }
 
@@ -117,7 +112,9 @@ namespace Reminderer.CustomControl
             }
         }
 
-        
+        private void UserControl_LostFocus(object sender, RoutedEventArgs e)
+        {
 
+        }
     }
 }

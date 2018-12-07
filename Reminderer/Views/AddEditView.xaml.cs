@@ -13,24 +13,6 @@ namespace Reminderer.Views.AddEditView
         public AddEditView()
         {
             InitializeComponent();
-            setListBoxItems();
-        }
-
-        private void setListBoxItems()
-        {
-            List<int> hourList = new List<int>();
-            List<int> minuteList = new List<int>();
-            for (int i=0; i<24; i++)
-            {
-                hourList.Add(i + 1);
-            }
-            for (int j=0; j<60; j++)
-            {
-                minuteList.Add(j);
-            }
-
-            hourListBox.ItemsSource = hourList;
-            minuteListBox.ItemsSource = minuteList;
         }
 
         public void UtilizeObject(object obj)

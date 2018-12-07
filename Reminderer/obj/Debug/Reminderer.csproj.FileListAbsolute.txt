@@ -24,3 +24,6 @@ C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.pdb
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csprojAssemblyReference.cache
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\TimePicker.g.cs
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\TimePicker.baml
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\ToggleSwitch.g.cs
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\ToggleSwitch.baml

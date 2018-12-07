@@ -3,8 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:customControl="clr-namespace:Reminderer.CustomControl"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="400"
+      
       >
     <Grid>
         <Grid.Resources>
@@ -16,25 +18,29 @@
                 <Setter Property="BorderThickness" Value="0 0 0 1"/>
             </Style>
             <Style TargetType="{x:Type TextBox}">
-                <Setter Property="Margin" Value="3 0 0 3"/>
+                <Setter Property="Margin" Value="5 5 5 5"/>
+            </Style>
+            <Style TargetType="{x:Type RadioButton}">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="560*"/>
-            <RowDefinition Height="40*"/>
+            <RowDefinition Height="0.93*"/>
+            <RowDefinition Height="0.07*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="White" Margin="3,3,3,3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30*" MinWidth="30"/>
-                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="0.28*" MinWidth="30"/>
+                <ColumnDefinition Width="0.84*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="112.5*"/>
-                <RowDefinition Height="112.5*"/>
-                <RowDefinition Height="187.5*"/>
-                <RowDefinition Height="112.5*"/>
-                <RowDefinition Height="112.5*"/>
-                <RowDefinition Height="112.5*"/>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="0.25*"/>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="0.15*"/>
+                <RowDefinition Height="0.15*"/>
             </Grid.RowDefinitions>
 
            
@@ -47,38 +53,22 @@
             <Label Content="Time" Grid.Row="2" Grid.Column="0"/>
             <Grid Grid.Row="2" Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="0.25*"/>
+                    <RowDefinition Height="0.75*"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="20*"/>
-                    <ColumnDefinition Width="20*"/>
-                </Grid.ColumnDefinitions>
                 
-                <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                
-                <Label Grid.Row="1" Grid.Column="0" Content="H:" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <ListBox Grid.Row="1" Name="hourListBox"  Grid.Column="1" SelectionMode="Single" />
-
-                <Label Grid.Row="1" Grid.Column="2" Content="M:" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <ListBox Grid.Row="1" Name="minuteListBox"  Grid.Column="3" SelectionMode="Single" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-                <Label Grid.Row="1" Grid.Column="4" Content="H: "/>
-                <TextBox Grid.Row="1" Grid.Column="5"/>
+                <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5 5 5 5"/>
+                <customControl:TimePicker Grid.Row="1" Grid.ColumnSpan="6" Margin="5 5 5 5" x:Name="timePicker"/>
             </Grid>
 
             <Label Content="Remind?" Grid.Row="3" Grid.Column="0"/>
-            <TextBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch" />
-
+            <RadioButton Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">Yes</RadioButton>
+            <RadioButton Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">No</RadioButton>
+    
             <Label Content="Repeat?" Grid.Row="4" Grid.Column="0"/>
-            <TextBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" />
+            
 
             <Label Content="Repeating Days" Grid.Row="5" Grid.Column="0"/>
-            <TextBox Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" />
 
         </Grid>
         <Button Grid.Row="1" Content="Add"/>

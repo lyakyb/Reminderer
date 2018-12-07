@@ -8,17 +8,18 @@
              d:DesignHeight="200" d:DesignWidth="600"
              Background="Black"
              MouseWheel="mouseWheelShifted"
+             LostFocus="lostFocus"          
              >
     <UserControl.Resources>
         <Style TargetType="Button" x:Key="timeStyle">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="Black" />
-            <Setter Property="FontSize" Value="80" />
             <Setter Property="FontWeight" Value="ExtraLight" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
         <Style TargetType="Button" x:Key="adjBtn">
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -28,21 +29,49 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="90*"/>
-            <ColumnDefinition Width="150*"/>
-            <ColumnDefinition Width="90*"/>
-            <ColumnDefinition Width="150*"/>
-            <ColumnDefinition Width="120*"/>
+            <ColumnDefinition Width="0.15*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.15*"/>
+            <ColumnDefinition Width="0.25*"/>
+            <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
 
-        <Button Style="{StaticResource timeStyle}" Grid.Column="0" Grid.RowSpan="2" x:Name="hourButton" Content="H:" Click="buttonPressed"/>
-        <Button Style="{StaticResource timeStyle}" Grid.Column="1" Grid.RowSpan="2" x:Name="hourNumber" Click="buttonPressed"/>
-        <Button Style="{StaticResource timeStyle}" Grid.Column="2" Grid.RowSpan="2" x:Name="minuteButton" Content="M:" Click="buttonPressed"/>
-        <Button Style="{StaticResource timeStyle}" Grid.Column="3" Grid.RowSpan="2" x:Name="minuteNumber" Click="buttonPressed"/>
+        <Button Style="{StaticResource timeStyle}" Grid.Column="0" Grid.RowSpan="2" x:Name="hourButton" Click="buttonPressed">
+            <Button.Content>
+                <Viewbox>
+                    <TextBlock HorizontalAlignment="Left">Hour:</TextBlock>
+                </Viewbox>
+            </Button.Content>
+        </Button>
+
+        <Button Style="{StaticResource timeStyle}" Grid.Column="1" Grid.RowSpan="2" x:Name="hourNumber" Click="buttonPressed">
+            <Button.Content>
+                <Viewbox>
+                    <TextBlock HorizontalAlignment="Center" x:Name="hourNumberText"/>
+                </Viewbox>
+            </Button.Content>
+        </Button>
+                
+        <Button Style="{StaticResource timeStyle}" Grid.Column="2" Grid.RowSpan="2" x:Name="minuteButton" Click="buttonPressed">
+            <Button.Content>
+                <Viewbox>
+                    <TextBlock HorizontalAlignment="Left">Minute:</TextBlock>
+                </Viewbox>
+            </Button.Content>
+        </Button>
+        
+        <Button Style="{StaticResource timeStyle}" Grid.Column="3" Grid.RowSpan="2" x:Name="minuteNumber" Click="buttonPressed">
+            <Button.Content>
+                <Viewbox>
+                    <TextBlock HorizontalAlignment="Center" x:Name="minuteNumberText"/>
+                </Viewbox>
+            </Button.Content>
+        </Button>
+        
         <Button Grid.Column="4" Grid.Row="0" x:Name="incButton" Style="{StaticResource adjBtn}" Click="incBtnPressed">
             <StackPanel>
                 <Image Source="/Images/upArrow.png" Width="50" Height="50" />
