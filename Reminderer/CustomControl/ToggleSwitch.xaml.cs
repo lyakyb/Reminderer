@@ -25,9 +25,13 @@ namespace Reminderer.CustomControl
         private double _deltaX;
         private Color _onColor;
         private Color _offColor;
+        private string _offText;
+        private string _onText;
 
         const string DEFAULT_OFF_COLOR_HEX_VALUE = "#b0b2b1";
         const string DEFAULT_ON_COLOR_HEX_VALUE = "#89ffa5";
+        const string DEFAULT_ONTEXT_TEXT = "YES";
+        const string DEFAULT_OFFTEXT_TEXT = "NO";
 
 
 
@@ -40,6 +44,8 @@ namespace Reminderer.CustomControl
             InitializeComponent();
             this.SetOffColorFromHexString(DEFAULT_OFF_COLOR_HEX_VALUE);
             this.SetOnColorFromHexString(DEFAULT_ON_COLOR_HEX_VALUE);
+            this.OnText = DEFAULT_ONTEXT_TEXT;
+            this.OffText = DEFAULT_OFFTEXT_TEXT;
 
             Loaded += delegate
             {
@@ -52,8 +58,8 @@ namespace Reminderer.CustomControl
         {
             innerCircle.Width = background.ActualWidth;
             innerCircle.Height = background.ActualHeight * 0.8;
-            innerCircle.RadiusX = innerCircle.ActualWidth * 0.1;
-            innerCircle.RadiusY = innerCircle.ActualHeight * 1;
+            innerCircle.RadiusX = innerCircle.Width * 0.1;
+            innerCircle.RadiusY = innerCircle.Height * 0.5;
 
             toggleEllipse.Width = innerCircle.Height * 0.9;
             toggleEllipse.Height = innerCircle.Height * 0.9;
@@ -79,7 +85,7 @@ namespace Reminderer.CustomControl
             Console.WriteLine($"desiredGap: {desiredGap}");
             Console.WriteLine($"deltaX: {_deltaX}");
 
-
+            textDetail.Text = this.OffText;
         }
 
         private void clicked(object sender, RoutedEventArgs e)
@@ -97,13 +103,14 @@ namespace Reminderer.CustomControl
 
                 Console.WriteLine($"TO: {db.To}");
                 ColorAnimation color = new ColorAnimation();
-                color.From = (Color)ColorConverter.ConvertFromString(DEFAULT_ON_COLOR_HEX_VALUE);
-                color.To = (Color)ColorConverter.ConvertFromString(DEFAULT_OFF_COLOR_HEX_VALUE);
+                color.From = this.OnColor;
+                color.To = this.OffColor;
 
                 innerCircle.Fill = new SolidColorBrush((Color)color.From);
                 color.Duration = new Duration(TimeSpan.FromSeconds(0.5));
 
                 innerCircle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, color);
+                textDetail.Text = this.OffText;
             } else
             {
                 DoubleAnimation db = new DoubleAnimation();
@@ -116,13 +123,14 @@ namespace Reminderer.CustomControl
                 tt.BeginAnimation(TranslateTransform.XProperty, db);
 
                 ColorAnimation color = new ColorAnimation();
-                color.From = (Color)ColorConverter.ConvertFromString(DEFAULT_OFF_COLOR_HEX_VALUE);
-                color.To = (Color)ColorConverter.ConvertFromString(DEFAULT_ON_COLOR_HEX_VALUE);
+                color.From = this.OffColor;
+                color.To = this.OnColor;
 
                 innerCircle.Fill = new SolidColorBrush((Color)color.From);
                 color.Duration = new Duration(TimeSpan.FromSeconds(0.5));
 
                 innerCircle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, color);
+                textDetail.Text = this.OnText;
             }
             _toggled = !_toggled;
 
@@ -148,6 +156,35 @@ namespace Reminderer.CustomControl
             get { return _offColor; }
             set { _offColor = value; }
         }
+   
+        public string OffText
+        {
+            get { return (string)this.GetValue(OffTextProperty); }
+            set { this.SetValue(OffTextProperty, value);
+                _offText = value;
+            }
+        }
+        public static readonly DependencyProperty OffTextProperty = DependencyProperty.Register(
+          "OffText", typeof(string), typeof(ToggleSwitch));
+
+        public string OnText
+        {
+            get { return (string)this.GetValue(OnTextProperty); }
+            set { this.SetValue(OnTextProperty, value);
+                _onText = value;
+            }
+        }
+        public static readonly DependencyProperty OnTextProperty = DependencyProperty.Register(
+          "OnText", typeof(string), typeof(ToggleSwitch));
+
+        public Boolean IsToggled
+        {
+            get { return (Boolean)this.GetValue(ToggleProperty); }
+            set { this.SetValue(ToggleProperty, value); }
+        }
+        public static readonly DependencyProperty ToggleProperty = DependencyProperty.Register(
+          "IsToggled", typeof(Boolean), typeof(ToggleSwitch));
+
 
         #endregion
 
