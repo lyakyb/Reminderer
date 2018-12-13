@@ -79,12 +79,6 @@ namespace Reminderer.CustomControl
 
             _deltaX = onMarginLeft - onMarginRight - toggleEllipse.Width;
 
-            Console.WriteLine($"innerCircle width: {innerCircle.Width} and height: {innerCircle.Height}");
-            Console.WriteLine($"ellipse width: {toggleEllipse.Width}");
-            Console.WriteLine($"currentMargin: {toggleEllipse.Margin}");
-            Console.WriteLine($"desiredGap: {desiredGap}");
-            Console.WriteLine($"deltaX: {_deltaX}");
-
             textDetail.Text = this.OffText;
         }
 
@@ -101,7 +95,6 @@ namespace Reminderer.CustomControl
 
                 tt.BeginAnimation(TranslateTransform.XProperty, db);
 
-                Console.WriteLine($"TO: {db.To}");
                 ColorAnimation color = new ColorAnimation();
                 color.From = this.OnColor;
                 color.To = this.OffColor;
@@ -182,7 +175,6 @@ namespace Reminderer.CustomControl
         {
             get { return (Boolean)this.GetValue(ToggleProperty); }
             set { this.SetValue(ToggleProperty, value);
-                Console.WriteLine($"ISTOGGLED CHANGED to: {this.GetValue(ToggleProperty)}");
             }
         }
         public static readonly DependencyProperty ToggleProperty = DependencyProperty.Register(

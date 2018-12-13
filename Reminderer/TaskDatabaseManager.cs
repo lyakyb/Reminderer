@@ -66,7 +66,6 @@ namespace Reminderer
                 t.Description = reader["Description"].ToString();
                 t.Importance = int.Parse(reader["Importance"].ToString());
                 t.DesiredDateTime = DateTime.Parse(reader["DesiredDateTime"].ToString());
-                Console.WriteLine($"should remind: {reader["ShouldRemind"].ToString()}");
                 t.ShouldRemind = int.Parse(reader["ShouldRemind"].ToString()) != 0;
                 t.ShouldRepeat = int.Parse(reader["ShouldRepeat"].ToString()) != 0;
                 foreach (var day in reader["RepeatingDays"].ToString().Split(','))

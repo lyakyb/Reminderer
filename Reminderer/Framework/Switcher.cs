@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
-using Reminderer.Views.ScheduleListView;
+using Reminderer.Views;
 
 namespace Reminderer.Framework
 {
@@ -10,11 +10,11 @@ namespace Reminderer.Framework
 
         public static void Switch(UserControl newPage)
         {
-            pageSwitcher.Navigate(newPage);
+//            pageSwitcher.Navigate(newPage);
         }
         public static void Switch(UserControl newPage, object obj)
         {
-            pageSwitcher.Navigate(newPage, obj);
+  //          pageSwitcher.Navigate(newPage, obj);
         }
 
     }

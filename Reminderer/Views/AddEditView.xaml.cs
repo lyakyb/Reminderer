@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
-namespace Reminderer.Views.AddEditView
+namespace Reminderer.Views
 {
     /// <summary>
     /// Interaction logic for AddEditView.xaml

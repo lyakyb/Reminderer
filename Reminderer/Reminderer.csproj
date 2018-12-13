@@ -77,7 +77,10 @@
     </Compile>
     <Compile Include="Framework\DatabaseManager.cs" />
     <Compile Include="Framework\ISwitchable.cs" />
+    <Compile Include="Framework\Mediator.cs" />
     <Compile Include="Framework\Switcher.cs" />
+    <Compile Include="IRemindererViewModel.cs" />
+    <Compile Include="NavigationViewModel.cs" />
     <Compile Include="TaskDatabaseManager.cs" />
     <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>
@@ -88,6 +91,7 @@
       <DependentUpon>ChoiceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChoiceViewModel.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Views\ScheduleListView.xaml.cs">
       <DependentUpon>ScheduleListView.xaml</DependentUpon>
     </Compile>

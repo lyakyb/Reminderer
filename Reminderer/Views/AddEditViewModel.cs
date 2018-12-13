@@ -8,9 +8,9 @@ using System.Windows.Input;
 using System.ComponentModel;
 using Reminderer.Framework;
 
-namespace Reminderer.Views.AddEditView
+namespace Reminderer.Views
 {
-    class AddEditViewModel : BaseViewModel
+    class AddEditViewModel : BaseViewModel, IRemindererViewModel
     {
         private Task _newTask;
         public Task NewTask
@@ -25,6 +25,13 @@ namespace Reminderer.Views.AddEditView
             }
         }
 
+        private bool _reminderSelected;
+        public bool ReminderSelected
+        {
+            get { return _reminderSelected; }
+            set { _reminderSelected = value; Console.WriteLine($"reminderSelected: {value}"); }
+        }
+
         public void Task_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             AddCommand.RaiseCanExecuteChanged();
@@ -32,14 +39,11 @@ namespace Reminderer.Views.AddEditView
         
         public AddEditViewModel()
         {
+        }
+        public AddEditViewModel(TaskDatabaseManager taskDatabaseManager) : base(taskDatabaseManager) {
+            ReminderSelected = false;
             AddCommand = new DelegateCommand(executeAddCommand, canExecuteAdd);
             NewTask = new Task();
-        }
-
-        public AddEditViewModel(Task task)
-        {
-            AddCommand = new DelegateCommand(executeAddCommand, canExecuteAdd);
-            NewTask = task;
         }
 
         private DelegateCommand _addCommand;
@@ -55,7 +59,7 @@ namespace Reminderer.Views.AddEditView
             DatabaseManager.InsertTask(NewTask);                      
             DatabaseManager.DisconnectFromDatabase();
 
-            Switcher.Switch(new Views.ScheduleListView.ScheduleListView());
+            Switcher.Switch(new ScheduleListView());
             
         }
         private bool canExecuteAdd(object obj)

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Reminderer.Views.ScheduleListView.ScheduleListView"
+﻿<UserControl x:Class="Reminderer.Views.ScheduleListView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock FontSize="18" FontFamily="Italic" FontWeight="Bold" Grid.Row="0" HorizontalAlignment="Stretch">Your Reminders</TextBlock>
-        <Button x:Name="newTaskButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Click="addNewTaskButton_Click"/>
+        <Button x:Name="newTaskButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
         <ListView Grid.Row="1" ItemsSource="{Binding Tasks}">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">

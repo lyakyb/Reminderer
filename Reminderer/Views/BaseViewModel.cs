@@ -1,13 +1,14 @@
 ﻿using Reminderer.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Reminderer.Views
 {
-    class BaseViewModel
+    abstract class BaseViewModel : INotifyPropertyChanged
     {
         public TaskDatabaseManager DatabaseManager { get; set; }
 
@@ -18,6 +19,12 @@ namespace Reminderer.Views
 
         public BaseViewModel()
         {
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

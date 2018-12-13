@@ -3,7 +3,7 @@ using Reminderer;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Reminderer.Views.ScheduleListView;
+using Reminderer.Views;
 using Reminderer.CustomControl;
 
 namespace Reminderer
@@ -16,25 +16,6 @@ namespace Reminderer
         public MainWindow()
         {
             InitializeComponent();
-            Switcher.pageSwitcher = this;
-            Switcher.Switch(new ScheduleListView());
-        }
-        public void Navigate(UserControl nextPage)
-        {
-            this.Content = nextPage;
-        }
-        public void Navigate(UserControl nextPage, object obj)
-        {
-            this.Content = nextPage;
-            ISwitchable switcher = nextPage as ISwitchable;
-
-            if (switcher != null)
-            {
-                switcher.UtilizeObject(obj);
-            } else
-            {
-                throw new ArgumentException($"Destination page is not Iswitchable {nextPage.Name.ToString()}");
-            }
         }
     }
 }
