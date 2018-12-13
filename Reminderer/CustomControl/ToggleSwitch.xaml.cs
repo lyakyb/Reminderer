@@ -133,6 +133,7 @@ namespace Reminderer.CustomControl
                 textDetail.Text = this.OnText;
             }
             _toggled = !_toggled;
+            IsToggled = _toggled;
 
         }
 
@@ -180,10 +181,12 @@ namespace Reminderer.CustomControl
         public Boolean IsToggled
         {
             get { return (Boolean)this.GetValue(ToggleProperty); }
-            set { this.SetValue(ToggleProperty, value); }
+            set { this.SetValue(ToggleProperty, value);
+                Console.WriteLine($"ISTOGGLED CHANGED to: {this.GetValue(ToggleProperty)}");
+            }
         }
         public static readonly DependencyProperty ToggleProperty = DependencyProperty.Register(
-          "IsToggled", typeof(Boolean), typeof(ToggleSwitch));
+          "IsToggled", typeof(Boolean), typeof(ToggleSwitch), new PropertyMetadata(false));
 
 
         #endregion

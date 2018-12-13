@@ -4,10 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:customControl="clr-namespace:Reminderer.CustomControl"
+      xmlns:local="clr-namespace:Reminderer.Views.AddEditView"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="400"
-      
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       >
+        <UserControl.DataContext>
+            <local:AddEditViewModel/>
+        </UserControl.DataContext>
+    
     <Grid>
         <Grid.Resources>
             <Style TargetType="{x:Type Label}">
@@ -24,6 +29,10 @@
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
             </Style>
+            
+            
+            
+            
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.93*"/>
@@ -45,10 +54,10 @@
 
            
             <Label Content="Description" Grid.Row="0" Grid.Column="0" />
-            <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" />
+            <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding NewTask.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Label Content="Importance" Grid.Row="1" Grid.Column="0"/>
-            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" />
+            <Label Content="Extra Detail" Grid.Row="1" Grid.Column="0"/>
+            <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding NewTask.ExtraDetail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Label Content="Time" Grid.Row="2" Grid.Column="0"/>
             <Grid Grid.Row="2" Grid.Column="1">
@@ -56,23 +65,81 @@
                     <RowDefinition Height="0.25*"/>
                     <RowDefinition Height="0.75*"/>
                 </Grid.RowDefinitions>
-                
-                <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5 5 5 5"/>
-                <customControl:TimePicker Grid.Row="1" Grid.ColumnSpan="6" Margin="5 5 5 5" x:Name="timePicker"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.Resources>
+                    <Style TargetType="RadioButton">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TaskSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding TaskSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" Value="False">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
+                <!-- Task Time Choices -->
+
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="From now" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.FromSavedTime}"/>
+                <RadioButton Grid.Row="0" Grid.Column="1" Content="Every interval" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsAtSetInterval}"/>
+
+                <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5 5 5 5" DisplayDateStart="{x:Static sys:DateTime.Now}" SelectedDate="{Binding NewTask.DesiredDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DatePicker.Style>
+                        <Style TargetType="DatePicker">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TaskSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding TaskSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Style>
+                </DatePicker>
+                <customControl:TimePicker Grid.Row="1" Grid.ColumnSpan="6" Margin="5 5 5 5" x:Name="timePicker" HourValue="{Binding DesiredHour}" MinuteValue="{Binding DesiredMinute}"/>
             </Grid>
 
             <Label Content="Remind?" Grid.Row="3" Grid.Column="0"/>
-            <RadioButton Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">Yes</RadioButton>
-            <RadioButton Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center">No</RadioButton>
-    
+            <Grid Grid.Row="3" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.4*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.4*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.4*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="0.4*"/>
+                </Grid.ColumnDefinitions>
+                <customControl:ToggleSwitch Grid.Row="1" Grid.Column="1" IsToggled="{Binding Path=NewTask.ShouldRemind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid> 
+
             <Label Content="Repeat?" Grid.Row="4" Grid.Column="0"/>
-            <customControl:ToggleSwitch Grid.Row="4" Grid.Column="1" />
+            <Grid Grid.Row="4" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.4*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.4*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.4*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="0.4*"/>
+                </Grid.ColumnDefinitions>
+            <customControl:ToggleSwitch Grid.Row="1" Grid.Column="1" IsToggled="{Binding Path=NewTask.ShouldRepeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
 
+            <Label Content="Repeating Days" Grid.Row="5" Grid.Column="0" />
+            <customControl:RepeatingDayPicker Grid.Row="5" Grid.Column="1" SelectedDays="{Binding NewTask.RepeatingDays, Mode=OneWayToSource}"/>
 
-            <Label Content="Repeating Days" Grid.Row="5" Grid.Column="0"/>
 
         </Grid>
-        <Button Grid.Row="1" Content="Add"/>
+        <Button Grid.Row="1" Content="Add" Command="{Binding AddCommand}"/>
     </Grid>
 
 </UserControl>

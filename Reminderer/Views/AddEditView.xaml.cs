@@ -8,21 +8,28 @@ namespace Reminderer.Views.AddEditView
     /// <summary>
     /// Interaction logic for AddEditView.xaml
     /// </summary>
+    /// 
+
+      
+
     public partial class AddEditView : UserControl, ISwitchable
     {
+        public bool TaskSelected { get; set; }
+
         public AddEditView()
+            : this(false) { }
+
+        public AddEditView(bool taskSelected)
         {
+            TaskSelected = taskSelected;
             InitializeComponent();
         }
 
         public void UtilizeObject(object obj)
         {
-            throw new NotImplementedException();
+            if (obj.GetType() == typeof(TaskDatabaseManager))
+                (DataContext as BaseViewModel).DatabaseManager = (TaskDatabaseManager)obj;
         }
 
-        private void addButton_click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            return;
-        }
     }
 }

@@ -27,3 +27,7 @@ C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\TimePi
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\ToggleSwitch.g.cs
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\ToggleSwitch.baml
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\RepeatingDayPicker.g.cs
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\CustomControl\RepeatingDayPicker.baml
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Views\ChoiceView.g.cs
+C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Views\ChoiceView.baml

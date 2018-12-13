@@ -5,7 +5,7 @@ using Reminderer.Framework;
 
 namespace Reminderer.Views.ScheduleListView
 {
-    class ScheduleListViewModel
+    class ScheduleListViewModel : BaseViewModel
     {
         private IList<Task> _scheduleList;
 
@@ -17,15 +17,21 @@ namespace Reminderer.Views.ScheduleListView
             tasks.Add(new Task { Description = "Test 3", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
             tasks.Add(new Task { Description = "Test 4", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
 
-            DatabaseManager databaseManager = new DatabaseManager();
-            databaseManager.CreateNewDatabase("test1");
-            databaseManager.ConnectToDatabase("test1");
+            DatabaseManager = new TaskDatabaseManager();
+            DatabaseManager.CreateNewDatabase("test1");
+            DatabaseManager.ConnectToDatabase("test1");
 
-            databaseManager.CreateTasksTable("tasks_test_1");
-            databaseManager.Insert("tasks_test_1", tasks);
+            DatabaseManager.CreateTasksTable();
+            DatabaseManager.InsertTasks(tasks);
 
-            _scheduleList = databaseManager.LoadSavedTasks("tasks_test_1");
+            _scheduleList = DatabaseManager.LoadSavedTasks();
+
+            DatabaseManager.DisconnectFromDatabase();
         }
+
+        
+
+
 
         public IList<Task> Tasks
         {

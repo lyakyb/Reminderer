@@ -29,30 +29,31 @@ namespace Reminderer.CustomControl
         public TimePicker()
         {
             InitializeComponent();
-            MinuteVal = 0;
-            HourVal = 0;
+            _minuteVal = 0;
+            _hourVal = 0;
+            hourNumberText.Text = "0";
+            minuteNumberText.Text = "0";
             _hourBtnFocused = _minBtnFocused = false;
         }
 
-        public int HourVal
-        {
-            get { return _hourVal; }
-            set
-            {
-                _hourVal = value;
-                hourNumberText.Text = _hourVal.ToString();
-            }
-        }
-
-        public int MinuteVal
-        {
-            get { return _minuteVal; }
-            set
-            {
-                _minuteVal = value;
-                minuteNumberText.Text = _minuteVal.ToString();
-            }
-        }
+        //public int HourVal
+        //{
+        //    get { return _hourVal; }
+        //    set
+        //    {
+        //        _hourVal = value;
+        //        hourNumberText.Text = _hourVal.ToString();
+        //    }
+        //}
+        //public int MinuteVal
+        //{
+        //    get { return _minuteVal; }
+        //    set
+        //    {
+        //        _minuteVal = value;
+        //        minuteNumberText.Text = _minuteVal.ToString();
+        //    }
+        //}
 
         private void lostFocus(object sender, RoutedEventArgs e)
         {
@@ -81,10 +82,10 @@ namespace Reminderer.CustomControl
         {
             if (_hourBtnFocused)
             {
-                HourVal = HourVal + 1 == 24 ? 23 : HourVal + 1;
+                HourValue = HourValue + 1 == 24 ? 23 : HourValue + 1;
             } else if (_minBtnFocused)
             {
-                MinuteVal = MinuteVal + 1 == 60 ? 0 : MinuteVal + 1;
+                MinuteValue = MinuteValue + 1 == 60 ? 0 : MinuteValue + 1;
             }
         }
 
@@ -92,11 +93,11 @@ namespace Reminderer.CustomControl
         {
             if (_hourBtnFocused)
             {
-                HourVal = HourVal - 1 < 0 ? 0 : HourVal - 1;
+                HourValue = HourValue - 1 < 0 ? 0 : HourValue - 1;
             }
             else if (_minBtnFocused)
             {
-                MinuteVal = MinuteVal - 1 < 0 ? 59 : MinuteVal - 1;
+                MinuteValue = MinuteValue - 1 < 0 ? 59 : MinuteValue - 1;
             }
         }
 
@@ -116,5 +117,33 @@ namespace Reminderer.CustomControl
         {
 
         }
+
+
+        public int HourValue
+        {
+            get { return (int)this.GetValue(HourValueProperty); }
+            set
+            {
+                this.SetValue(HourValueProperty, value);
+                _hourVal = value;
+                hourNumberText.Text = _hourVal.ToString();
+            }
+        }
+        public static readonly DependencyProperty HourValueProperty = DependencyProperty.Register(
+          "HourValue", typeof(int), typeof(TimePicker), new PropertyMetadata(0));
+
+        public int MinuteValue
+        {
+            get { return (int)this.GetValue(MinuteValueProperty); }
+            set
+            {
+                this.SetValue(MinuteValueProperty, value);
+                _minuteVal = value;
+                minuteNumberText.Text = _minuteVal.ToString();
+            }
+        }
+        public static readonly DependencyProperty MinuteValueProperty = DependencyProperty.Register(
+          "MinuteValue", typeof(int), typeof(TimePicker), new PropertyMetadata(0));
+
     }
 }

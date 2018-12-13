@@ -18,7 +18,7 @@ namespace Reminderer.Views.ScheduleListView
 
         private void addNewTaskButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            Switcher.Switch(new AddEditView.AddEditView());
+            Switcher.Switch(new ChoiceView(), (this.DataContext as BaseViewModel).DatabaseManager);
         }
 
         #region ISwitchable Members

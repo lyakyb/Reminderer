@@ -16,5 +16,6 @@ namespace Reminderer.Framework
         {
             pageSwitcher.Navigate(newPage, obj);
         }
+
     }
 }
