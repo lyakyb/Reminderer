@@ -76,9 +76,7 @@
       <DependentUpon>ToggleSwitch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\DatabaseManager.cs" />
-    <Compile Include="Framework\ISwitchable.cs" />
     <Compile Include="Framework\Mediator.cs" />
-    <Compile Include="Framework\Switcher.cs" />
     <Compile Include="IRemindererViewModel.cs" />
     <Compile Include="NavigationViewModel.cs" />
     <Compile Include="TaskDatabaseManager.cs" />

@@ -59,9 +59,9 @@ namespace Reminderer.Views
             DatabaseManager.InsertTask(NewTask);                      
             DatabaseManager.DisconnectFromDatabase();
 
-            Switcher.Switch(new ScheduleListView());
-            
+            Mediator.Broadcast(Constants.ShowListView);    
         }
+
         private bool canExecuteAdd(object obj)
         {
             return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null;

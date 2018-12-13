@@ -31,5 +31,3 @@ C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.csproj.Co
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.exe
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\Reminderer.pdb
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\obj\Debug\App.baml
-C:\Users\lyaky\source\repos\Reminderer\Reminderer\bin\Debug\Reminderer.exe.CodeAnalysisLog.xml
-C:\Users\lyaky\source\repos\Reminderer\Reminderer\bin\Debug\Reminderer.exe.lastcodeanalysissucceeded

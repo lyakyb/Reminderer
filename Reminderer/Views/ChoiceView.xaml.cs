@@ -13,10 +13,5 @@ namespace Reminderer.Views
         {
             InitializeComponent();
         }
-
-        public void UtilizeObject(object obj)
-        {
-        }
-
     }
 }
