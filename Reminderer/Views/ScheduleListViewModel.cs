@@ -12,7 +12,6 @@ namespace Reminderer.Views
         private IList<Task> _reminders;
         private IList<Task> _schedules;
         
-        
         public ScheduleListViewModel()
         {
         }
@@ -29,12 +28,13 @@ namespace Reminderer.Views
 
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
             EditCommand = new DelegateCommand(executeEditCommand, canExecuteEditCommand);
+            DeleteCommand = new DelegateCommand(executeDeleteCommand, canExecuteDeleteCommand);
         }
 
         public void UpdateTasks()
         {
-            Reminders = new List<Task>();
-            Schedules = new List<Task>();
+            var reminders = new List<Task>();
+            var schedules = new List<Task>();
 
             DatabaseManager.ConnectToDatabase("test1");
             Tasks = DatabaseManager.LoadSavedTasks();
@@ -42,13 +42,16 @@ namespace Reminderer.Views
             {
                 if (t.Type == 0)
                 {
-                    Schedules.Add(t);
+                    schedules.Add(t);
                 } else
                 {
-                    Reminders.Add(t);
+                    reminders.Add(t);
                 }
             }
             DatabaseManager.DisconnectFromDatabase();
+
+            Reminders = reminders;
+            Schedules = schedules;
         }
 
         private DelegateCommand _newTaskCommand;
@@ -82,6 +85,25 @@ namespace Reminderer.Views
             return true;
         }
 
+        private DelegateCommand _deleteCommand;
+        public DelegateCommand DeleteCommand
+        {
+            get { return _deleteCommand; }
+            set { _deleteCommand = value; }
+        }
+        private void executeDeleteCommand(object obj)
+        {
+            if (obj == null) return;
+            DatabaseManager.ConnectToDatabase("test1");
+            DatabaseManager.DeleteTask((Task)obj);
+            DatabaseManager.DisconnectFromDatabase();
+            UpdateTasks();
+        }
+        private bool canExecuteDeleteCommand(object obj)
+        {
+            return true;
+        }
+
 
         public IList<Task> Tasks
         {
@@ -92,13 +114,13 @@ namespace Reminderer.Views
         public IList<Task> Reminders
         {
             get { return _reminders; }
-            set { _reminders = value; }
+            set { _reminders = value; OnPropertyChanged("Reminders"); }
         }
 
         public IList<Task> Schedules
         {
             get { return _schedules; }
-            set { _schedules = value; }
+            set { _schedules = value; OnPropertyChanged("Schedules"); }
         }
     }
 }

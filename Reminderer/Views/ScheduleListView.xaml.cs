@@ -1,7 +1,6 @@
-﻿using Reminderer.Framework;
-using System;
-using System.Windows.Controls;
-using Reminderer.Windows;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Reminderer.Views
 {
@@ -10,6 +9,9 @@ namespace Reminderer.Views
     /// </summary>
     public partial class ScheduleListView : UserControl
     {
+
+        private object task;
+
         public ScheduleListView()
         {
             InitializeComponent();

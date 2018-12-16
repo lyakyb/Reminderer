@@ -33,6 +33,7 @@
                 <Setter Property="TextBlock.Padding" Value="5 0 0 0"/>
             </Style>
 
+
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"/>
@@ -62,7 +63,13 @@
             </ListView.View>
             
         </ListView>-->
-        <DataGrid x:Name="ReminderGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Reminders}" RowDetailsVisibilityMode="Visible" EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+        <DataGrid x:Name="ReminderGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Reminders, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RowDetailsVisibilityMode="Visible" EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource FindAncestor,
+                   AncestorType={x:Type ContextMenu}}}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.InputBindings>
                 <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditCommand}" CommandParameter="{Binding ElementName=ReminderGrid, Path=SelectedItem}"/>
             </DataGrid.InputBindings>
@@ -80,7 +87,13 @@
         <TextBlock Grid.Row="2">Your Scehdules</TextBlock>
         <Button x:Name="newScheduleButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
 
-        <DataGrid x:Name="ScheduleGrid" Grid.Row="3" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Schedules}" RowDetailsVisibilityMode="Visible"  EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+        <DataGrid x:Name="ScheduleGrid" Grid.Row="3" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Schedules, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" RowDetailsVisibilityMode="Visible"  EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource FindAncestor,
+                   AncestorType={x:Type ContextMenu}}}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.InputBindings>
                 <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditCommand}" CommandParameter="{Binding ElementName=ScheduleGrid, Path=SelectedItem}"/>
             </DataGrid.InputBindings>
