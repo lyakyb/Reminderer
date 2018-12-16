@@ -28,6 +28,7 @@ namespace Reminderer.Views
             DatabaseManager.DisconnectFromDatabase();
 
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
+            EditCommand = new DelegateCommand(executeEditCommand, canExecuteEditCommand);
         }
 
         public void UpdateTasks()
@@ -61,6 +62,22 @@ namespace Reminderer.Views
             Mediator.Broadcast(Constants.ShowChoiceView);
         }
         private bool canExecuteNewTask(object obj)
+        {
+            return true;
+        }
+
+        private DelegateCommand _editCommand;
+        public DelegateCommand EditCommand
+        {
+            get { return _editCommand; }
+            set { _editCommand = value; }
+        }
+        private void executeEditCommand(object obj)
+        {
+            if (obj == null) return;
+            Mediator.Broadcast(Constants.ShowAddEditView, obj);
+        }
+        private bool canExecuteEditCommand(object obj)
         {
             return true;
         }

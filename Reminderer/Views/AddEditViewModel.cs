@@ -22,6 +22,7 @@ namespace Reminderer.Views
                 _newTask = value;
                 if (_newTask != null)
                     _newTask.PropertyChanged += Task_PropertyChanged;
+                ReminderSelected = value.Type == 1 ? true : false;
             }
         }
 

@@ -62,7 +62,10 @@
             </ListView.View>
             
         </ListView>-->
-        <DataGrid Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Reminders}" RowDetailsVisibilityMode="Visible" EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+        <DataGrid x:Name="ReminderGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Reminders}" RowDetailsVisibilityMode="Visible" EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditCommand}" CommandParameter="{Binding ElementName=ReminderGrid, Path=SelectedItem}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Description" Width="Auto" MinWidth="250" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}" />
                 <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>

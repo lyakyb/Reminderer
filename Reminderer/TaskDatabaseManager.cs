@@ -55,7 +55,7 @@ namespace Reminderer
                 return;
             }
 
-            string sqlCommand = $"CREATE TABLE {TASK_DB_TABLE_NAME} (Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
+            string sqlCommand = $"CREATE TABLE {TASK_DB_TABLE_NAME} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
             SQLiteCommand command = new SQLiteCommand(sqlCommand, this.DbConnection);
             command.ExecuteNonQuery();
         }
@@ -71,6 +71,7 @@ namespace Reminderer
             while (reader.Read())
             {
                 Task t = new Task();
+                t.TaskId = int.Parse(reader["taskId"].ToString());
                 t.Description = reader["Description"].ToString();
                 t.ExtraDetail = reader["ExtraDetail"].ToString();
                 t.DesiredDateTime = DateTime.FromBinary(long.Parse(reader["DesiredDateTime"].ToString()));

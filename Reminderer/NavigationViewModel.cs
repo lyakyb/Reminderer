@@ -1,11 +1,11 @@
 ﻿using Reminderer.Framework;
+using Reminderer.Models;
 using Reminderer.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Reminderer
 {
@@ -72,7 +72,13 @@ namespace Reminderer
         {
             AddEditViewModel addEditVM = (AddEditViewModel)ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(AddEditViewModel));
             ChangeViewModel(addEditVM);
-            addEditVM.ReminderSelected = (bool)obj;
+            if(obj.GetType().Name == "Task")
+            {
+                addEditVM.NewTask = (Task)obj;
+            }else if (obj.GetType() == typeof(bool))
+            {
+                addEditVM.ReminderSelected = (bool)obj;
+            }
         }
 
         public void ShowChoiceView(object obj)

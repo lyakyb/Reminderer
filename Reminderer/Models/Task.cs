@@ -20,6 +20,7 @@ namespace Reminderer.Models
         private bool _isFromSavedTime;
         private bool _isAtSetInterval;
         private int _type;
+        private int _taskId;
 
         public Task()
         {
@@ -59,6 +60,12 @@ namespace Reminderer.Models
         {
             get { return _desiredDateTime; }
             set { _desiredDateTime = value; OnPropertyChanged(); }
+        }
+
+        public int TaskId
+        {
+            get { return _taskId; }
+            set { _taskId = value; }
         }
 
         public int Importance
