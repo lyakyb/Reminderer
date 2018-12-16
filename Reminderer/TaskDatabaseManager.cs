@@ -42,6 +42,39 @@ namespace Reminderer
             command.ExecuteNonQuery();
         }
 
+        public void UpdateTask(Task task)
+        {
+            string sqlCommand = $"UPDATE {TASK_DB_TABLE_NAME} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam WHERE taskId=@taskIdParam"; 
+               
+            SQLiteCommand command = new SQLiteCommand(sqlCommand, this.DbConnection);
+            command.Parameters.AddWithValue("@descParam", task.Description);
+            command.Parameters.AddWithValue("@extParam", task.ExtraDetail);
+            command.Parameters.AddWithValue("@ddtParam", task.DesiredDateTime.ToBinary());
+            command.Parameters.AddWithValue("@remindParam", task.ShouldRemind);
+            command.Parameters.AddWithValue("@repeatParam", task.ShouldRepeat);
+            command.Parameters.AddWithValue("@taskIdParam", task.TaskId);
+            if (task.RepeatingDays != null)
+            {
+                command.Parameters.AddWithValue("@daysParam", string.Join(",", task.RepeatingDays));
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@daysParam", "");
+            }
+            command.Parameters.AddWithValue("@typeParam", task.Type);
+
+            command.ExecuteNonQuery();
+        }
+
+        public void DeleteTask(Task task)
+        {
+            string sqlCommand = $"DELETE FROM {TASK_DB_TABLE_NAME} WHERE taskId=@taskIdParam";
+            SQLiteCommand command = new SQLiteCommand(sqlCommand, this.DbConnection);
+            command.Parameters.AddWithValue("@taskIdParam", task.TaskId);
+
+            command.ExecuteNonQuery();
+        }
+
         public void CreateTasksTable()
         {
             string sqlCommand2 = $"SELECT name FROM sqlite_master WHERE name='{TASK_DB_TABLE_NAME}'";

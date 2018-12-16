@@ -71,14 +71,15 @@ namespace Reminderer
         public void ShowAddEditView(object obj)
         {
             AddEditViewModel addEditVM = (AddEditViewModel)ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(AddEditViewModel));
-            ChangeViewModel(addEditVM);
             if(obj.GetType().Name == "Task")
             {
                 addEditVM.NewTask = (Task)obj;
+                addEditVM.IsEditing = true;
             }else if (obj.GetType() == typeof(bool))
             {
                 addEditVM.ReminderSelected = (bool)obj;
             }
+            ChangeViewModel(addEditVM);
         }
 
         public void ShowChoiceView(object obj)

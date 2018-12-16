@@ -27,15 +27,21 @@ namespace Reminderer.Views
         }
 
         private int _desiredHour;
-        public int DesiredHour { get { return _desiredHour; } set { _desiredHour = value;  } }
+        public int DesiredHour { get { return _desiredHour; } set { _desiredHour = value; } }
         private int _desiredMinute;
         public int DesiredMinute { get { return _desiredMinute; } set { _desiredMinute = value; } }
 
+        private bool _isEditing;
+        public bool IsEditing
+        {
+            get { return _isEditing; }
+            set { _isEditing = value; }
+        }
         private bool _reminderSelected;
         public bool ReminderSelected
         {
             get { return _reminderSelected; }
-            set { _reminderSelected = value; Console.WriteLine($"reminderSelected: {value}"); }
+            set { _reminderSelected = value; }
         }
 
         public void Task_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -71,10 +77,20 @@ namespace Reminderer.Views
             }
 
             DatabaseManager.ConnectToDatabase("test1");
-            DatabaseManager.InsertTask(NewTask);                      
+
+            if (IsEditing)
+            {
+                DatabaseManager.UpdateTask(NewTask);
+            }
+            else
+            {
+                DatabaseManager.InsertTask(NewTask);                      
+            }
+
             DatabaseManager.DisconnectFromDatabase();
 
             NewTask = new Task();
+            IsEditing = false;
             Mediator.Broadcast(Constants.ShowListView);    
         }
 
