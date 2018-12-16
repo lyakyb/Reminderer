@@ -64,6 +64,11 @@ namespace Reminderer.Views
             NewTask.DesiredDateTime = NewTask.DesiredDateTime.AddMinutes(DesiredMinute);
             NewTask.Type = ReminderSelected ? 1 : 0;
 
+            if (!NewTask.ShouldRepeat)
+            {
+                NewTask.RepeatingDays.RemoveRange(0, NewTask.RepeatingDays.Count);
+            }
+
             DatabaseManager.ConnectToDatabase("test1");
             DatabaseManager.InsertTask(NewTask);                      
             DatabaseManager.DisconnectFromDatabase();

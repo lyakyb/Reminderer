@@ -131,7 +131,7 @@
             </Grid>
 
             <Label Content="Repeating Days" Grid.Row="5" Grid.Column="0" />
-            <customControl:RepeatingDayPicker Grid.Row="5" Grid.Column="1" SelectedDays="{Binding NewTask.RepeatingDays, Mode=OneWayToSource}"/>
+            <customControl:RepeatingDayPicker IsEnabled="{Binding NewTask.ShouldRepeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="5" Grid.Column="1" SelectedDays="{Binding NewTask.RepeatingDays, Mode=OneWayToSource}"/>
 
 
         </Grid>

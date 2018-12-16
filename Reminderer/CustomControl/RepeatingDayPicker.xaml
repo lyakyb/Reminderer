@@ -23,6 +23,13 @@
                                     <Setter Property="Foreground" Value="Gray"/>
                                     <Setter Property="FontWeight" Value="Bold"/>
                                 </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="LightGray"/>
+                                    <Setter Property="BorderThickness" Value="0 0 1 0" />
+                                    <Setter Property="BorderBrush" Value="Gray"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="IsChecked" Value="False"/>
+                                </Trigger>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter Property="Foreground" Value="#FF099709" />
                                 </Trigger>
@@ -50,6 +57,7 @@
         <ToggleButton Grid.Column="3" Content="W" x:Name="wednesday" Click="dayClicked" />
         <ToggleButton Grid.Column="4" Content="T" x:Name="thursday" Click="dayClicked" />
         <ToggleButton Grid.Column="5" Content="F" x:Name="friday" Click="dayClicked" />
-        <ToggleButton Grid.Column="6" Content="S" x:Name="saturday" BorderThickness="0" Click="dayClicked"/>
+        <ToggleButton Grid.Column="6" Content="S" x:Name="saturday" Click="dayClicked"/>
+
     </Grid>
 </UserControl>
