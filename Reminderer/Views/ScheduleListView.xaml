@@ -81,6 +81,9 @@
         <Button x:Name="newScheduleButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
 
         <DataGrid Grid.Row="3" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Schedules}" RowDetailsVisibilityMode="Visible"  EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding EditCommand}" CommandParameter="{Binding ElementName=ReminderGrid, Path=SelectedItem}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Description" MinWidth="250" Width="Auto" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}"/>
                 <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>
