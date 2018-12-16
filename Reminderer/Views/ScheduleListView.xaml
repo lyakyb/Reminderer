@@ -5,29 +5,97 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
+      xmlns:customControl="clr-namespace:Reminderer.CustomControl"
       >
 
-    <Grid Margin="3, 10 ,10 ,10">
+    <Grid Margin="10, 10 ,10 ,10">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="FontWeight" Value="ExtraLight"/>
+                <Setter Property="FontSize" Value="20"/>
+            </Style>
+            <Style TargetType="ListView">
+                <Setter Property="BorderThickness" Value="0.1"/>
+            </Style>
+            <Style TargetType="DataGridCell">
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+            <Style TargetType="DataGridRow">
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="BorderThickness" Value="0.3"/>
+            </Style>
+            
+            <Style x:Key="descriptionTextBlock">
+                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                <Setter Property="TextBlock.HorizontalAlignment" Value="Left"/>
+                <Setter Property="TextBlock.Padding" Value="5 0 0 0"/>
+            </Style>
+
+        </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.45*"/>
+            <RowDefinition Height="0.05*"/>
+            <RowDefinition Height="0.45*"/>
         </Grid.RowDefinitions>
-        <TextBlock FontSize="18" FontFamily="Italic" FontWeight="Bold" Grid.Row="0" HorizontalAlignment="Stretch">Your Reminders</TextBlock>
-        <Button x:Name="newTaskButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
-        <ListView Grid.Row="1" ItemsSource="{Binding Tasks}">
+        
+        
+        <TextBlock Grid.Row="0">Your Reminders</TextBlock>
+        <Button x:Name="newReminderButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
+        <!--<ListView Grid.Row="1" ItemsSource="{Binding Tasks}">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
-                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Setter Property="Visibility" Value="Visible"/>
                 </Style>
             </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Description" Width="250" DisplayMemberBinding="{Binding Description}"/>
-                    <GridViewColumn Header="Importance" Width="50" DisplayMemberBinding="{Binding Importance}"/>
-                    <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding Time}"/>
+                    <GridViewColumn Header="ExtraDetail" Width="50" DisplayMemberBinding="{Binding ExtraDetail}"/>
+                    <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding DesiredDateTime}"/>
+                    <GridViewColumn Header="Repeat?" Width="50" DisplayMemberBinding="{Binding ShouldRepeat}"/>
+                    <GridViewColumn Header="Remind?" Width="50" DisplayMemberBinding="{Binding ShouldRemind}"/>
+                    <GridViewColumn Header="Repeat Days" Width="100" DisplayMemberBinding="{Binding RepeatingDays}"/>
                 </GridView>
             </ListView.View>
-        </ListView>
+            
+        </ListView>-->
+        <DataGrid Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Reminders}" RowDetailsVisibilityMode="Visible" EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Description" Width="Auto" MinWidth="250" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}" />
+                <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <customControl:TaskExtraDetail />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+
+        <TextBlock Grid.Row="2">Your Scehdules</TextBlock>
+        <Button x:Name="newScheduleButton" HorizontalAlignment="Right" VerticalAlignment="Top" Content="+" BorderThickness="0" Background="Transparent" FontSize="18" FontWeight="ExtraBold" Command="{Binding NewTaskCommand}"/>
+
+        <DataGrid Grid.Row="3" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding Schedules}" RowDetailsVisibilityMode="Visible"  EnableRowVirtualization="False" HeadersVisibility="None" GridLinesVisibility="None" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Description" MinWidth="250" Width="Auto" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}"/>
+                <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>
+                <DataGridTextColumn Header="Until" Width="*" Binding="{Binding TimeUntilDesiredDateText}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Padding" Value="0 0 5 0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <customControl:TaskExtraDetail />
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        
     </Grid>
 </UserControl>

@@ -22,14 +22,22 @@ namespace Reminderer
 
         public void InsertTask(Task task)
         {
-            string sqlCommand = $"insert into {TASK_DB_TABLE_NAME} (Description, Importance, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays) VALUES (@descParam,@impParam,@ddtParam,@remindParam,@repeatParam,@daysParam)";
+            string sqlCommand = $"insert into {TASK_DB_TABLE_NAME} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam)";
             SQLiteCommand command = new SQLiteCommand(sqlCommand, this.DbConnection);
             command.Parameters.AddWithValue("@descParam", task.Description);
-            command.Parameters.AddWithValue("@impParam", task.Importance);
-            command.Parameters.AddWithValue("@ddtParam", task.DesiredDateTime.ToLongTimeString());
+            command.Parameters.AddWithValue("@extParam", task.ExtraDetail);
+            command.Parameters.AddWithValue("@ddtParam", task.DesiredDateTime.ToBinary());
             command.Parameters.AddWithValue("@remindParam", task.ShouldRemind);
             command.Parameters.AddWithValue("@repeatParam", task.ShouldRepeat);
-            command.Parameters.AddWithValue("@daysParam", string.Join(",", task.RepeatingDays));
+            if (task.RepeatingDays != null)
+            {
+                command.Parameters.AddWithValue("@daysParam", string.Join(",", task.RepeatingDays));
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@daysParam", "");
+            }
+            command.Parameters.AddWithValue("@typeParam", task.Type);
 
             command.ExecuteNonQuery();
         }
@@ -47,7 +55,7 @@ namespace Reminderer
                 return;
             }
 
-            string sqlCommand = $"CREATE TABLE {TASK_DB_TABLE_NAME} (Description text, Importance integer, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text)";
+            string sqlCommand = $"CREATE TABLE {TASK_DB_TABLE_NAME} (Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
             SQLiteCommand command = new SQLiteCommand(sqlCommand, this.DbConnection);
             command.ExecuteNonQuery();
         }
@@ -64,13 +72,23 @@ namespace Reminderer
             {
                 Task t = new Task();
                 t.Description = reader["Description"].ToString();
-                t.Importance = int.Parse(reader["Importance"].ToString());
-                t.DesiredDateTime = DateTime.Parse(reader["DesiredDateTime"].ToString());
+                t.ExtraDetail = reader["ExtraDetail"].ToString();
+                t.DesiredDateTime = DateTime.FromBinary(long.Parse(reader["DesiredDateTime"].ToString()));
                 t.ShouldRemind = int.Parse(reader["ShouldRemind"].ToString()) != 0;
                 t.ShouldRepeat = int.Parse(reader["ShouldRepeat"].ToString()) != 0;
-                foreach (var day in reader["RepeatingDays"].ToString().Split(','))
+                t.Type = int.Parse(reader["Type"].ToString());
+                var days = reader["RepeatingDays"].ToString().Split(',');
+                if (days != null && days.Count() > 0)
                 {
-                    t.RepeatingDays.Add(day.ToCharArray().First());
+                    foreach (var day in days)
+                    {
+                        if (string.IsNullOrWhiteSpace(day)) continue;
+                        t.RepeatingDays.Add(Convert.ToInt32(day));
+                    }
+                }
+                else
+                {
+                    t.RepeatingDays = null;
                 }
 
                 tasks.Add(t);

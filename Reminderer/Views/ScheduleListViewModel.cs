@@ -8,34 +8,47 @@ namespace Reminderer.Views
 {
     class ScheduleListViewModel : BaseViewModel, IRemindererViewModel
     {
-        private IList<Task> _scheduleList;
-
-
+        private IList<Task> _tasks;
+        private IList<Task> _reminders;
+        private IList<Task> _schedules;
+        
+        
         public ScheduleListViewModel()
         {
         }
 
         public ScheduleListViewModel(TaskDatabaseManager taskDatabaseManager):base(taskDatabaseManager)
         {
-            var tasks = new List<Task> { };
-            tasks.Add(new Task { Description = "Test 1", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
-            tasks.Add(new Task { Description = "Test 2", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
-            tasks.Add(new Task { Description = "Test 3", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
-            tasks.Add(new Task { Description = "Test 4", DesiredDateTime = new DateTime(), Importance = 1, ShouldRemind = true, ShouldRepeat = false, RepeatingDays = { 'm', 't', 'w' } });
-            
             DatabaseManager.CreateNewDatabase("test1");
             DatabaseManager.ConnectToDatabase("test1");
 
             DatabaseManager.CreateTasksTable();
-            DatabaseManager.InsertTasks(tasks);
 
-            Tasks = DatabaseManager.LoadSavedTasks();
-
+            UpdateTasks();
             DatabaseManager.DisconnectFromDatabase();
 
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
         }
 
+        public void UpdateTasks()
+        {
+            Reminders = new List<Task>();
+            Schedules = new List<Task>();
+
+            DatabaseManager.ConnectToDatabase("test1");
+            Tasks = DatabaseManager.LoadSavedTasks();
+            foreach (Task t in Tasks)
+            {
+                if (t.Type == 0)
+                {
+                    Schedules.Add(t);
+                } else
+                {
+                    Reminders.Add(t);
+                }
+            }
+            DatabaseManager.DisconnectFromDatabase();
+        }
 
         private DelegateCommand _newTaskCommand;
         public DelegateCommand NewTaskCommand
@@ -55,8 +68,20 @@ namespace Reminderer.Views
 
         public IList<Task> Tasks
         {
-            get { return _scheduleList; }
-            set { _scheduleList = value; }
+            get { return _tasks; }
+            set { _tasks = value; }
+        }
+
+        public IList<Task> Reminders
+        {
+            get { return _reminders; }
+            set { _reminders = value; }
+        }
+
+        public IList<Task> Schedules
+        {
+            get { return _schedules; }
+            set { _schedules = value; }
         }
     }
 }

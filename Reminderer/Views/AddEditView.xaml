@@ -97,7 +97,7 @@
                         </Style>
                     </DatePicker.Style>
                 </DatePicker>
-                <customControl:TimePicker Grid.Row="1" Grid.ColumnSpan="6" Margin="5 5 5 5" x:Name="timePicker" HourValue="{Binding DesiredHour}" MinuteValue="{Binding DesiredMinute}"/>
+                <customControl:TimePicker Grid.Row="1" Grid.ColumnSpan="6" Margin="5 5 5 5" x:Name="timePicker" HourValue="{Binding DesiredHour, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinuteValue="{Binding DesiredMinute, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <Label Content="Remind?" Grid.Row="3" Grid.Column="0"/>

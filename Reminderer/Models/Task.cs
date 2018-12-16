@@ -19,7 +19,7 @@ namespace Reminderer.Models
         private List<int> _repeatingDays; // 0~6, Sun~Sat
         private bool _isFromSavedTime;
         private bool _isAtSetInterval;
-
+        private int _type;
 
         public Task()
         {
@@ -47,6 +47,12 @@ namespace Reminderer.Models
         {
             get { return _extraDetail; }
             set { _extraDetail = value; OnPropertyChanged(); }
+        }
+
+        public int Type
+        {
+            get { return _type; }
+            set { _type = value; OnPropertyChanged(); }
         }
 
         public DateTime DesiredDateTime
@@ -84,6 +90,24 @@ namespace Reminderer.Models
             return DesiredDateTime.Subtract(DateTime.Now);
         }
 
+        public string TimeUntilDesiredDateText
+        {
+            get
+            {
+                var t = TimeUntilDesiredDate();
+                if (t.Days == 0 && t.Hours != 0)
+                {
+                    return $"{t.Hours} hours left";
+                }else if (t.Days == 0 && t.Hours == 0)
+                {
+                    return $"{t.Minutes} minutes left";
+                }else
+                {
+                    return $"D-{t.Days}";
+                }
+            }
+        }
+
         public bool FromSavedTime
         {
             get { return _isFromSavedTime; }
@@ -94,6 +118,49 @@ namespace Reminderer.Models
         {
             get { return _isAtSetInterval; }
             set { _isAtSetInterval = value; OnPropertyChanged(); }
+        }
+
+        public string RepeatingDaysText
+        {
+            get
+            {
+                if (RepeatingDays == null || RepeatingDays.Count == 0)
+                    return "-";
+
+                string text = repeatingDayConverter(RepeatingDays.First());
+                
+                for (int i=1; i<RepeatingDays.Count; i++)
+                {
+                    text = $"{text} ,{repeatingDayConverter(RepeatingDays[i])}";
+                }
+                
+                return text;
+            }
+        }
+
+        private string repeatingDayConverter(int day)
+        {
+            switch (day)
+            {
+                case 0:
+                    return "Sun";
+                case 1:
+                    return "Mon";
+                case 2:
+                    return "Tue";
+                case 3:
+                    return "Wed";
+                case 4:
+                    return "Thur";
+                case 5:
+                    return "Fri";
+                case 6:
+                    return "Sat";
+                case 7:
+                    return "Everyday";
+                default:
+                    return "";
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

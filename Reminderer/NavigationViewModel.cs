@@ -63,7 +63,9 @@ namespace Reminderer
 
         public void ShowListView(object obj)
         {
-            ChangeViewModel(ViewModels.FirstOrDefault(viewModel=>viewModel.GetType() == typeof(ScheduleListViewModel)));
+            ScheduleListViewModel listVM = (ScheduleListViewModel)ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(ScheduleListViewModel));
+            ChangeViewModel(listVM);
+            listVM.UpdateTasks();
         }
 
         public void ShowAddEditView(object obj)

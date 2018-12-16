@@ -1,0 +1,5 @@
+﻿3. Disable selecting RepeatingDays until shouldRepeat has been set to true by the user
+4. Edit existing reminder/schedules
+5. Attach notifications to alarm/schedules using Timer
+6. Make application not shutdown but minimize to an icon 
+7. add right mouse click options on the icon (Open/Exit)

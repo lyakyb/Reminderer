@@ -69,6 +69,9 @@
     <Compile Include="CustomControl\RepeatingDayPicker.xaml.cs">
       <DependentUpon>RepeatingDayPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControl\TaskExtraDetail.xaml.cs">
+      <DependentUpon>TaskExtraDetail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControl\TimePicker.xaml.cs">
       <DependentUpon>TimePicker.xaml</DependentUpon>
     </Compile>
@@ -80,6 +83,7 @@
     <Compile Include="IRemindererViewModel.cs" />
     <Compile Include="NavigationViewModel.cs" />
     <Compile Include="TaskDatabaseManager.cs" />
+    <Compile Include="TimerManager.cs" />
     <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>
     </Compile>
@@ -98,6 +102,10 @@
       <DependentUpon>NotificationWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="CustomControl\RepeatingDayPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControl\TaskExtraDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -165,7 +173,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="TODOs.txt" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\downArrow.png" />
     <Resource Include="Images\upArrow.png" />

@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\lyaky\source\repos\Reminderer\Reminderer\App.xaml
-8-10678123
+9-193115775
 
-24-96800550
+26-386333589
 721847922830
-CustomControl\RepeatingDayPicker.xaml;CustomControl\TimePicker.xaml;CustomControl\ToggleSwitch.xaml;MainWindow.xaml;Views\AddEditView.xaml;Views\ChoiceView.xaml;Views\ScheduleListView.xaml;Windows\NotificationWindow.xaml;
+CustomControl\RepeatingDayPicker.xaml;CustomControl\TaskExtraDetail.xaml;CustomControl\TimePicker.xaml;CustomControl\ToggleSwitch.xaml;MainWindow.xaml;Views\AddEditView.xaml;Views\ChoiceView.xaml;Views\ScheduleListView.xaml;Windows\NotificationWindow.xaml;
 
 False
 
