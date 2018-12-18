@@ -115,7 +115,7 @@ namespace Reminderer.Models
             }
         }
 
-        public bool FromSavedTime
+        public bool IsFromSavedTime
         {
             get { return _isFromSavedTime; }
             set { _isFromSavedTime = value; OnPropertyChanged(); }

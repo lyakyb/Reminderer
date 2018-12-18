@@ -80,7 +80,7 @@
                 </Grid.Resources>
                 <!-- Task Time Choices -->
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="From now" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.FromSavedTime}"/>
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="From now" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsFromSavedTime}"/>
                 <RadioButton Grid.Row="0" Grid.Column="1" Content="Every interval" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsAtSetInterval}"/>
 
                 <DatePicker Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5 5 5 5" DisplayDateStart="{x:Static sys:DateTime.Now}" SelectedDate="{Binding NewTask.DesiredDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">

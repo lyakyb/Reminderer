@@ -99,7 +99,7 @@ namespace Reminderer
                 return;
             }
 
-            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
+            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int, IsFromSavedTime integer, IsAtSetInterval integer)";
 
             databaseManager.ExecuteNonQueryCommand(s);
         }
@@ -142,7 +142,7 @@ namespace Reminderer
             }
             prevTask = task;
 
-            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam WHERE taskId=@taskIdParam";
+            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam, IsFromSavedTime=@fromTimeParam, IsAtSetInterval=@setIntervalParam WHERE taskId=@taskIdParam";
             var dict = dictionaryRepresentationForTask(task);
             dict.Add("@taskIdParam", task.TaskId);
             var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
@@ -163,7 +163,7 @@ namespace Reminderer
             {
                 Schedules.Add(task);
             }
-            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam)";
+            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type, IsFromSavedTime, IsAtSetInterval) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam,@fromTimeParam,@setIntervalParam)";
                         
             var result = databaseManager.InsertUpdateDeleteWithParams(s, dictionaryRepresentationForTask(task));
             if (result != 1)
@@ -185,6 +185,8 @@ namespace Reminderer
             dict.Add("@repeatParam", task.ShouldRepeat);
             dict.Add("@daysParam", repeatingDays);
             dict.Add("@typeParam", task.Type);
+            dict.Add("@fromTimeParam", task.IsFromSavedTime);
+            dict.Add("@setIntervalParam", task.IsAtSetInterval);
 
             return dict;
         }
@@ -199,7 +201,9 @@ namespace Reminderer
             t.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
             t.Type = int.Parse(dr["Type"].ToString());
             t.TaskId = int.Parse(dr["TaskId"].ToString());
-            
+            t.IsFromSavedTime = int.Parse(dr["IsFromSavedTime"].ToString()) != 0;
+            t.IsAtSetInterval = int.Parse(dr["IsAtSetInterval"].ToString()) != 0;
+
             var days = dr["RepeatingDays"].ToString().Split(',');
             if (days != null && days.Count() > 0)
             {
