@@ -1,4 +1,6 @@
-﻿4. Edit existing reminder/schedules ---> fix task values not being initilized except for textbox
+﻿WHERE I LEFT OFF - Schedules/Reminders not updating immedieately, either change List => ObservableCollection and listen to add/remove or find a new way. 
+
+4. Edit existing reminder/schedules ---> fix task values not being initilized except for textbox
 5. Attach notifications to alarm/schedules using Timer
 6. Make application not shutdown but minimize to an icon 
 7. add right mouse click options on the icon (Open/Exit)

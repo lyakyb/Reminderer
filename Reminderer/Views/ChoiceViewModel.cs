@@ -10,9 +10,7 @@ namespace Reminderer.Views
 {
     class ChoiceViewModel : BaseViewModel, IRemindererViewModel
     {
-        public ChoiceViewModel(){}
-        public ChoiceViewModel(TaskDatabaseManager taskDatabaseManager) : base(taskDatabaseManager)
-        {
+        public ChoiceViewModel(){
             ScheduleCommand = new DelegateCommand(executeScheduleCommand, canExecuteSchedule);
             ReminderCommand = new DelegateCommand(executeRemindercommand, canExecuteReminder);
         }

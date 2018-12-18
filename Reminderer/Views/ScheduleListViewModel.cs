@@ -14,44 +14,13 @@ namespace Reminderer.Views
         
         public ScheduleListViewModel()
         {
-        }
-
-        public ScheduleListViewModel(TaskDatabaseManager taskDatabaseManager):base(taskDatabaseManager)
-        {
-            DatabaseManager.CreateNewDatabase("test1");
-            DatabaseManager.ConnectToDatabase("test1");
-
-            DatabaseManager.CreateTasksTable();
-
-            UpdateTasks();
-            DatabaseManager.DisconnectFromDatabase();
-
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
             EditCommand = new DelegateCommand(executeEditCommand, canExecuteEditCommand);
             DeleteCommand = new DelegateCommand(executeDeleteCommand, canExecuteDeleteCommand);
-        }
 
-        public void UpdateTasks()
-        {
-            var reminders = new List<Task>();
-            var schedules = new List<Task>();
+            tasksUpdated();
 
-            DatabaseManager.ConnectToDatabase("test1");
-            Tasks = DatabaseManager.LoadSavedTasks();
-            foreach (Task t in Tasks)
-            {
-                if (t.Type == 0)
-                {
-                    schedules.Add(t);
-                } else
-                {
-                    reminders.Add(t);
-                }
-            }
-            DatabaseManager.DisconnectFromDatabase();
-
-            Reminders = reminders;
-            Schedules = schedules;
+            Mediator.Subscribe(Constants.TasksUpdated, tasksUpdated);
         }
 
         private DelegateCommand _newTaskCommand;
@@ -94,14 +63,18 @@ namespace Reminderer.Views
         private void executeDeleteCommand(object obj)
         {
             if (obj == null) return;
-            DatabaseManager.ConnectToDatabase("test1");
-            DatabaseManager.DeleteTask((Task)obj);
-            DatabaseManager.DisconnectFromDatabase();
-            UpdateTasks();
+            RemindererManager.Instance.DeleteTask((Task)obj);
         }
+
         private bool canExecuteDeleteCommand(object obj)
         {
             return true;
+        }
+
+        private void tasksUpdated(object obj = null)
+        {
+            Schedules = RemindererManager.Instance.Schedules;
+            Reminders = RemindererManager.Instance.Reminders;
         }
 
 

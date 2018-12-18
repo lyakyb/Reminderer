@@ -51,8 +51,6 @@ namespace Reminderer.Views
         
         public AddEditViewModel()
         {
-        }
-        public AddEditViewModel(TaskDatabaseManager taskDatabaseManager) : base(taskDatabaseManager) {
             ReminderSelected = false;
             AddCommand = new DelegateCommand(executeAddCommand, canExecuteAdd);
             NewTask = new Task();
@@ -76,18 +74,14 @@ namespace Reminderer.Views
                 NewTask.RepeatingDays.RemoveRange(0, NewTask.RepeatingDays.Count);
             }
 
-            DatabaseManager.ConnectToDatabase("test1");
-
             if (IsEditing)
             {
-                DatabaseManager.UpdateTask(NewTask);
+                RemindererManager.Instance.EditTask(NewTask);
             }
             else
             {
-                DatabaseManager.InsertTask(NewTask);                      
+                RemindererManager.Instance.CreateTask(NewTask);
             }
-
-            DatabaseManager.DisconnectFromDatabase();
 
             NewTask = new Task();
             IsEditing = false;

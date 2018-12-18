@@ -32,18 +32,18 @@ namespace Reminderer
 
         public NavigationViewModel()
         {
-            TaskDatabaseManager taskDatabaseManager = new TaskDatabaseManager();
-
-            ViewModels.Add(new ScheduleListViewModel(taskDatabaseManager));
-            ViewModels.Add(new ChoiceViewModel(taskDatabaseManager));
-            ViewModels.Add(new AddEditViewModel(taskDatabaseManager));
-
-            CurrentViewModel = ViewModels.First();
-
+            ViewModels.Add(new ScheduleListViewModel());
+            ViewModels.Add(new ChoiceViewModel());
+            ViewModels.Add(new AddEditViewModel());
+            
             Mediator.Subscribe(Constants.ShowListView, ShowListView);
             Mediator.Subscribe(Constants.ShowAddEditView, ShowAddEditView);
             Mediator.Subscribe(Constants.ShowChoiceView, ShowChoiceView);
 
+            RemindererManager.Instance.UpdateTasks();
+            Mediator.Broadcast(Constants.TasksUpdated);
+
+            CurrentViewModel = ViewModels.First();
         }
 
 
@@ -64,8 +64,9 @@ namespace Reminderer
         public void ShowListView(object obj)
         {
             ScheduleListViewModel listVM = (ScheduleListViewModel)ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(ScheduleListViewModel));
+           // RemindererManager.Instance.UpdateTasks();
+           // Mediator.Broadcast(Constants.TasksUpdated);
             ChangeViewModel(listVM);
-            listVM.UpdateTasks();
         }
 
         public void ShowAddEditView(object obj)
