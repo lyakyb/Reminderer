@@ -40,7 +40,7 @@ namespace Reminderer
             Mediator.Subscribe(Constants.ShowAddEditView, ShowAddEditView);
             Mediator.Subscribe(Constants.ShowChoiceView, ShowChoiceView);
 
-            RemindererManager.Instance.UpdateTasks();
+            RemindererManager.Instance.LoadTasks();
             Mediator.Broadcast(Constants.TasksUpdated);
 
             CurrentViewModel = ViewModels.First();

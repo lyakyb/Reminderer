@@ -79,11 +79,11 @@
       <DependentUpon>ToggleSwitch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\DatabaseManager.cs" />
+    <Compile Include="Framework\IDatabaseManager.cs" />
     <Compile Include="Framework\Mediator.cs" />
     <Compile Include="IRemindererViewModel.cs" />
     <Compile Include="NavigationViewModel.cs" />
     <Compile Include="RemindererManager.cs" />
-    <Compile Include="TaskDatabaseManager.cs" />
     <Compile Include="TimerManager.cs" />
     <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>

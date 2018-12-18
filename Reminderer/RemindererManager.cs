@@ -1,8 +1,10 @@
-﻿using Reminderer.Models;
+﻿using Reminderer.Framework;
+using Reminderer.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -12,16 +14,17 @@ namespace Reminderer
     {
         //TODO: would it be better to store everything locally and only update to DB on app close/open?  
         private static readonly RemindererManager _instance = new RemindererManager();
+        private DatabaseManager databaseManager;
         static RemindererManager()
         {
         }
         private RemindererManager()
         {
-            _taskDatabaseManager = new TaskDatabaseManager();
+            databaseManager = new DatabaseManager("Test1");
             Schedules = new ObservableCollection<Task>();
             Reminders = new ObservableCollection<Task>();
-            _taskDatabaseManager.CreateNewDatabase("test1");
-            _taskDatabaseManager.ConnectToDatabase("test1");
+
+            createTasksTable();
         }
 
         public static RemindererManager Instance
@@ -30,7 +33,6 @@ namespace Reminderer
         }
 
         #region Properties
-        private TaskDatabaseManager _taskDatabaseManager;
         private ObservableCollection<Task> _schedules;
         public ObservableCollection<Task> Schedules
         {
@@ -65,27 +67,45 @@ namespace Reminderer
 
         }
         
-        public void UpdateTasks()
+        public void LoadTasks()
         {
-            var tasks = _taskDatabaseManager.LoadSavedTasks();
-            Reminders.Clear();
-            Schedules.Clear();
-            foreach (Task t in tasks)
+            string s = $"SELECT * FROM {Constants.TasksTable}";
+
+            var ds = databaseManager.ReadData(s);
+            foreach(DataRow dr in ds.Tables[0].Rows)
             {
-                if (t.Type == 0 && !Schedules.Contains(t))
-                {
-                    Schedules.Add(t);
-                }
-                else if (!Reminders.Contains(t))
+                Task t = taskFromDataRow(dr);
+                if (t.Type == 1)
                 {
                     Reminders.Add(t);
                 }
+                else
+                {
+                    Schedules.Add(t);
+                }
             }
+
+        }
+
+        private void createTasksTable()
+        {
+            string s  = $"SELECT name FROM sqlite_master WHERE name='{Constants.TasksTable}'";
+
+            var result = databaseManager.ExecuteScalarCommand(s);
+
+            if (result != null && string.Equals(result.ToString(), Constants.TasksTable))
+            {
+                Console.WriteLine("Table exists already");
+                return;
+            }
+
+            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
+
+            databaseManager.ExecuteNonQueryCommand(s);
         }
 
         public void DeleteTask(Task task)
         {
-            _taskDatabaseManager.DeleteTask(task);
             if (Reminders.Contains(task))
             {
                 Reminders.Remove(task);
@@ -94,17 +114,24 @@ namespace Reminderer
             {
                 Schedules.Remove(task);
             }
+            deleteTaskWithId(task.TaskId.ToString());
         }
 
-        public void DeleteTaskWithId(string id)
+        private void deleteTaskWithId(string id)
         {
-            _taskDatabaseManager.DeleteTask(new Task() { TaskId= int.Parse(id)});
+            string s = $"DELETE FROM {Constants.TasksTable} WHERE taskId=@taskIdParam";
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            dict.Add("@taskIdParam", id);
+            var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
+            if (result != 1)
+            {
+                //exception handling
+            }
         }
 
         public void EditTask(Task task)
         {
             Task prevTask;
-            _taskDatabaseManager.UpdateTask(task);
             if (task.Type == 1)
             {
                 prevTask = Reminders.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
@@ -114,21 +141,82 @@ namespace Reminderer
                 prevTask = Schedules.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
             }
             prevTask = task;
+
+            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam WHERE taskId=@taskIdParam";
+            var dict = dictionaryRepresentationForTask(task);
+            dict.Add("@taskIdParam", task.TaskId);
+            var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
+
+            if (result != 1)
+            {
+                //exception handling
+            }
         }
 
         public void CreateTask(Task task)
         {
-            _taskDatabaseManager.InsertTask(task);
             if (task.Type == 1)
             {
                 Reminders.Add(task);
-            } else if (task.Type == 0)
+            }
+            else if (task.Type == 0)
             {
                 Schedules.Add(task);
             }
+            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam)";
+                        
+            var result = databaseManager.InsertUpdateDeleteWithParams(s, dictionaryRepresentationForTask(task));
+            if (result != 1)
+            {
+                //exception handling
+            }
         }
 
-               
+        private Dictionary<string, object> dictionaryRepresentationForTask(Task task)
+        {
+            task.ExtraDetail = task.ExtraDetail == null ? "-" : task.ExtraDetail;
+            var repeatingDays = task.RepeatingDays != null ? string.Join(",", task.RepeatingDays) : "";
+
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            dict.Add("@descParam", task.Description);
+            dict.Add("@extParam", task.ExtraDetail);
+            dict.Add("@ddtParam", task.DesiredDateTime.ToBinary());
+            dict.Add("@remindParam", task.ShouldRemind);
+            dict.Add("@repeatParam", task.ShouldRepeat);
+            dict.Add("@daysParam", repeatingDays);
+            dict.Add("@typeParam", task.Type);
+
+            return dict;
+        }
+
+        private Task taskFromDataRow(DataRow dr)
+        {
+            Task t = new Task();
+            t.Description = dr["Description"].ToString();
+            t.ExtraDetail = dr["ExtraDetail"].ToString();
+            t.DesiredDateTime = DateTime.FromBinary(long.Parse(dr["DesiredDateTime"].ToString()));
+            t.ShouldRemind = int.Parse(dr["ShouldRemind"].ToString()) != 0;
+            t.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
+            t.Type = int.Parse(dr["Type"].ToString());
+            t.TaskId = int.Parse(dr["TaskId"].ToString());
+            
+            var days = dr["RepeatingDays"].ToString().Split(',');
+            if (days != null && days.Count() > 0)
+            {
+                foreach (var day in days)
+                {
+                    if (string.IsNullOrWhiteSpace(day)) continue;
+                    t.RepeatingDays.Add(Convert.ToInt32(day));
+                }
+            }
+            else
+            {
+                t.RepeatingDays = null;
+            }
+
+            return t;
+        }
+
         #endregion
 
     }

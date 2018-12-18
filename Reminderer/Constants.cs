@@ -12,5 +12,6 @@ namespace Reminderer
         public const string ShowChoiceView = "ShowChoiceView";
         public const string ShowAddEditView = "ShowAddEditView";
         public const string TasksUpdated = "TasksUpdated";
+        public const string TasksTable = "Tasks";
     }
 }
