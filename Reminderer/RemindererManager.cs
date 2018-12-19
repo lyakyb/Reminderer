@@ -25,7 +25,7 @@ namespace Reminderer
             Schedules = new ObservableCollection<Task>();
             Reminders = new ObservableCollection<Task>();
             _taskNotificationDict = new Dictionary<int, Timer>();
-            createTasksTable();
+            CreateTasksTable();
         }
         public static RemindererManager Instance
         {
@@ -68,12 +68,25 @@ namespace Reminderer
             }
         }
 
-        private void removeFromNotifyList(string taskId)
+        private void RemoveFromNotifyList(int taskId)
         {
-
+            if (_taskNotificationDict.ContainsKey(taskId))
+            {
+                _taskNotificationDict[taskId].Dispose();
+                _taskNotificationDict.Remove(taskId);
+            }
         }
 
-        private void addToNotifyIfNeeded(Task task)
+        private void RemoveFromNotifyListIfNeeded(Task task)
+        {
+            if (task.ReminderSetting != 2 && _taskNotificationDict.ContainsKey(task.TaskId))
+            {
+                _taskNotificationDict[task.TaskId].Dispose();
+                _taskNotificationDict.Remove(task.TaskId);
+            }
+        }
+
+        private void AddToNotifyIfNeeded(Task task)
         {
             //Check if reminder or schedule
             //Only requires heavy checking on reminder 
@@ -121,6 +134,7 @@ namespace Reminderer
             var timer = TimerService.instance.ScheduleTaskForInterval(task.DesiredDateTime, interval, () =>
             {
                 Mediator.Broadcast(Constants.FireNotification, task);
+                RemoveFromNotifyListIfNeeded(task);
             });
             _taskNotificationDict[task.TaskId] = timer;
         }
@@ -146,7 +160,7 @@ namespace Reminderer
             }
             updateTasksToNotifyList();
         }
-        private void createTasksTable()
+        private void CreateTasksTable()
         {
             string s  = $"SELECT name FROM sqlite_master WHERE name='{Constants.TasksTable}'";
 
@@ -173,7 +187,9 @@ namespace Reminderer
                 Schedules.Remove(task);
             }
             deleteTaskWithId(task.TaskId.ToString());
+            RemoveFromNotifyList(task.TaskId);
         }
+
         private void deleteTaskWithId(string id)
         {
             string s = $"DELETE FROM {Constants.TasksTable} WHERE taskId=@taskIdParam";
@@ -184,7 +200,7 @@ namespace Reminderer
             {
                 //exception handling
             }
-            removeFromNotifyList(id);
+            RemoveFromNotifyList(int.Parse(id));
         }
         public void EditTask(Task task)
         {
@@ -209,7 +225,7 @@ namespace Reminderer
                 //exception handling
             }
 
-            addToNotifyIfNeeded(task);
+            AddToNotifyIfNeeded(task);
         }
         public void CreateTask(Task task)
         {
@@ -229,7 +245,7 @@ namespace Reminderer
                 //exception handling
             }
 
-            addToNotifyIfNeeded(task);
+            AddToNotifyIfNeeded(task);
         }
         private Dictionary<string, object> dictionaryRepresentationForTask(Task task)
         {
