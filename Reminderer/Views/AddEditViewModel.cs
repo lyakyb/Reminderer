@@ -79,13 +79,20 @@ namespace Reminderer.Views
                 NewTask.RepeatingDays.RemoveRange(0, NewTask.RepeatingDays.Count);
             }
 
-            if (NewTask.Type == Task.TaskType.Reminder && !NewTask.IsAtSpecificTime)
+            if (NewTask.Type == Task.TaskType.Reminder)
             {
-                NewTask.DesiredDateTime = DateTime.Now.AddHours(DesiredHour).AddMinutes(DesiredMinute);
-            }
+                if (NewTask.IsFromSavedTime)
+                {
+                    NewTask.DesiredDateTime = DateTime.Now.AddHours(DesiredHour).AddMinutes(DesiredMinute);
+                }
+            } 
 
             if (IsEditing)
             {
+                if (NewTask.IsAtSetInterval)
+                {
+                    NewTask.DesiredDateTime = DateTime.Today.AddHours(DesiredHour).AddMinutes(DesiredMinute);
+                }
                 RemindererManager.Instance.EditTask(NewTask);
             }
             else

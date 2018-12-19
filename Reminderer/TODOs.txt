@@ -1,10 +1,5 @@
 ﻿
 
-12/19=> redesign add page for Schedules as it doesn't really require notifications. (if remind is checked, give how many days before due date to receive notification)
-		where to put context menu commands for mvvm. 
-
-
-
 Update when loading tasks
 - schedules that need reminder on
 - Reminders are all off by default except for daily reminders (so for every interval it would start firing as soon as user turns it on)

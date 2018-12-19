@@ -122,7 +122,7 @@ namespace Reminderer
 
         private void NotifyEveryInterval(Task task)
         {
-            NotificationForDelayAndInterval((DateTime.Now.Hour - task.DesiredDateTime.Hour) * 60 + (task.DesiredDateTime.Minute - DateTime.Now.Minute), task);
+            NotificationForDelayAndInterval(task.DesiredDateTime.Hour * 60 + task.DesiredDateTime.Minute, task);
         }
         private void NotifyAtThisTime(Task task)
         {
@@ -205,6 +205,7 @@ namespace Reminderer
         public void EditTask(Task task)
         {
             Task prevTask;
+            RemoveFromNotifyList(task.TaskId);
             if (task.Type == Task.TaskType.Reminder)
             {
                 prevTask = Reminders.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
