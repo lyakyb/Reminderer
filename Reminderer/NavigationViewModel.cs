@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Windows;
 
@@ -99,6 +100,8 @@ namespace Reminderer
                 nw.ExtraDetailText = ((Task)obj).ExtraDetail;
                 nw.Topmost = true;
                 nw.Show();
+
+                SystemSounds.Hand.Play();
             });
         }
     }
