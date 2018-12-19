@@ -1,6 +1,4 @@
-﻿--> on DELETE, if the notification is on, the notification should get deleted as well.
-
-
+﻿
 
 12/19=> redesign add page for Schedules as it doesn't really require notifications. (if remind is checked, give how many days before due date to receive notification)
 		where to put context menu commands for mvvm. 

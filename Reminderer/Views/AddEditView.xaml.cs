@@ -23,7 +23,7 @@ namespace Reminderer.Views
             RepeatSwitchGrid.Visibility = System.Windows.Visibility.Hidden;
             RepeatingDaysLabel.Visibility = System.Windows.Visibility.Hidden;
             RepeatingDaysPicker.Visibility = System.Windows.Visibility.Hidden;
-
+            NumDaysComboBoxGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
         private void RemindToggleSwitch_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -34,6 +34,7 @@ namespace Reminderer.Views
             RepeatSwitchGrid.Visibility = System.Windows.Visibility.Visible;
             RepeatingDaysLabel.Visibility = System.Windows.Visibility.Visible;
             RepeatingDaysPicker.Visibility = System.Windows.Visibility.Visible;
+            NumDaysComboBoxGrid.Visibility = System.Windows.Visibility.Visible;
 
 
             DoubleAnimation db = new DoubleAnimation();
@@ -44,31 +45,29 @@ namespace Reminderer.Views
             {
                 db.From = RemindGrid.ActualHeight;
                 db.To = 0;
-                Console.WriteLine($"target: {RemindGrid.ActualHeight}");
-                db.Duration = TimeSpan.FromSeconds(1);
+                db.Duration = TimeSpan.FromSeconds(0.5);
 
                 db2.From = RemindLabel.ActualHeight;
                 db2.To = 0;
-                db2.Duration = TimeSpan.FromSeconds(1);
+                db2.Duration = TimeSpan.FromSeconds(0.5);
 
                 db3.From = RemindToggleSwitch.ActualHeight;
                 db3.To = 0;
-                db3.Duration = TimeSpan.FromSeconds(1);
+                db3.Duration = TimeSpan.FromSeconds(0.5);
             }
             else
             {
                 db.From = 0;
                 db.To = RemindGrid.ActualHeight;
-                Console.WriteLine($"target: {RemindGrid.ActualHeight}");
-                db.Duration = TimeSpan.FromSeconds(1);
+                db.Duration = TimeSpan.FromSeconds(0.5);
 
                 db2.From = 0;
                 db2.To = RemindLabel.ActualHeight;
-                db2.Duration = TimeSpan.FromSeconds(1);
+                db2.Duration = TimeSpan.FromSeconds(0.5);
 
                 db3.From = 0;
                 db3.To = RemindToggleSwitch.ActualHeight;
-                db3.Duration = TimeSpan.FromSeconds(1);
+                db3.Duration = TimeSpan.FromSeconds(0.5);
             }
 
             RepeatSwitchGrid.BeginAnimation(Grid.HeightProperty, db);
@@ -76,6 +75,7 @@ namespace Reminderer.Views
             RepeatLabel.BeginAnimation(Label.HeightProperty, db2);
             RepeatingDaysLabel.BeginAnimation(Label.HeightProperty, db2);
             RepeatToggleSwitch.BeginAnimation(HeightProperty, db3);
+            NumDaysComboBoxGrid.BeginAnimation(HeightProperty, db3);
 
             _animated = !_animated;
         }

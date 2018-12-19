@@ -24,13 +24,16 @@ namespace Reminderer.Framework
 
         public Timer ScheduleTaskForInterval(DateTime dateTime, double interval, Action action)
         {
+            //compare desiredTime and time now.
             DateTime now = DateTime.Now;
             TimeSpan delay = new TimeSpan();
             if (now > dateTime)
             {
+                //if now is ahead, fire immediately. 
                 delay = TimeSpan.Zero;
             } else
             {
+                //if desired is ahead, calculate difference 
                 delay = dateTime - now;
             }
             delay = TimeSpan.FromMinutes(delay.Seconds / 60);

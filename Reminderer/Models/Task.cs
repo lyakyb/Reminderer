@@ -38,6 +38,7 @@ namespace Reminderer.Models
         private bool _isFromSavedTime;
         private bool _isAtSetInterval;
         private bool _isAtSpecificTime;
+        private int _numDaysBeforeNotify;
         private TaskType _type;
         private int _taskId;
 
@@ -164,6 +165,12 @@ namespace Reminderer.Models
         {
             get { return _isAtSpecificTime; }
             set { _isAtSpecificTime = value; OnPropertyChanged(); }
+        }
+
+        public int NumDaysBeforeNotify
+        {
+            get { return _numDaysBeforeNotify; }
+            set { _numDaysBeforeNotify = value; OnPropertyChanged(); }
         }
 
         public string RepeatingDaysText

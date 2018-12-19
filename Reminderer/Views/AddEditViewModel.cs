@@ -26,6 +26,11 @@ namespace Reminderer.Views
             }
         }
 
+        public List<int> NumDaysOptions
+        {
+            get { return new List<int>{ 1,2,3,4,5,6,7}; }
+        }
+
         private int _desiredHour;
         public int DesiredHour { get { return _desiredHour; } set { _desiredHour = value; } }
         private int _desiredMinute;
