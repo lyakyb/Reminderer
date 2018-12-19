@@ -10,6 +10,24 @@ namespace Reminderer.Models
 {
     public class Task : INotifyPropertyChanged
     {
+        public enum TaskType {
+            Schedule = 0,
+            Reminder = 1
+        }
+
+        public enum Days
+        {
+            Sunday = 0,
+            Monday = 1,
+            Tuesday = 2,
+            Wednesday = 3,
+            Thursday = 4,
+            Friday = 5,
+            Saturday = 6,
+            Everyday = 7,
+            None = -1
+        }
+        
         private string _description;
         private string _extraDetail;
         private DateTime _desiredDateTime;
@@ -20,7 +38,7 @@ namespace Reminderer.Models
         private bool _isFromSavedTime;
         private bool _isAtSetInterval;
         private bool _isAtSpecificTime;
-        private int _type;
+        private TaskType _type;
         private int _taskId;
 
         public Task()
@@ -51,7 +69,7 @@ namespace Reminderer.Models
             set { _extraDetail = value; OnPropertyChanged(); }
         }
 
-        public int Type
+        public TaskType Type
         {
             get { return _type; }
             set { _type = value; OnPropertyChanged(); }

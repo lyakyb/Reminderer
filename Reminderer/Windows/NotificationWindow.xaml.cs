@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading;
+using System;
 
 namespace Reminderer.Windows
 {
@@ -9,6 +11,11 @@ namespace Reminderer.Windows
     /// </summary>
     public partial class NotificationWindow : Window
     {
+        private string _descriptionText;
+        private string _extraDetailText;
+        public string DescriptionText { get { return _descriptionText; } set { _descriptionText = value; DescriptionTextBlock.Text = value; } }
+        public string ExtraDetailText { get { return _extraDetailText; } set { _extraDetailText = value; ExtraDetailTextBlock.Text = value; } }
+
         public NotificationWindow()
         {
             InitializeComponent();
@@ -30,12 +37,20 @@ namespace Reminderer.Windows
             var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Right - this.Width;
             this.Top = desktopWorkingArea.Bottom - this.Height;
+
+            var timer = new System.Threading.Timer(delegate{
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.Close();
+                });
+            }, null, 5000, Timeout.Infinite);
         }
 
         private void closeButton_click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+
     }
 }
 

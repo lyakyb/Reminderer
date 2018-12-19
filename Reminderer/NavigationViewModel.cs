@@ -1,11 +1,13 @@
 ﻿using Reminderer.Framework;
 using Reminderer.Models;
 using Reminderer.Views;
+using Reminderer.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace Reminderer
 {
@@ -39,6 +41,7 @@ namespace Reminderer
             Mediator.Subscribe(Constants.ShowListView, ShowListView);
             Mediator.Subscribe(Constants.ShowAddEditView, ShowAddEditView);
             Mediator.Subscribe(Constants.ShowChoiceView, ShowChoiceView);
+            Mediator.Subscribe(Constants.FireNotification, FireNotification);
 
             RemindererManager.Instance.LoadTasks();
             Mediator.Broadcast(Constants.TasksUpdated);
@@ -86,6 +89,17 @@ namespace Reminderer
         public void ShowChoiceView(object obj)
         {
             ChangeViewModel(ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(ChoiceViewModel)));
+        }
+
+        public void FireNotification(object obj)
+        {
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                NotificationWindow nw = new NotificationWindow();
+                nw.DescriptionText = ((Task)obj).Description;
+                nw.ExtraDetailText = ((Task)obj).ExtraDetail;
+                nw.Topmost = true;
+                nw.Show();
+            });
         }
     }
 }

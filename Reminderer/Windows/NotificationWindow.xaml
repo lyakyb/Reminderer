@@ -21,8 +21,8 @@
                 <!--Reserve-->
             </Grid.RowDefinitions>
             <Button VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 0 15 0" FontSize="15" FontWeight="ExtraBold" Background="Transparent" Content="X" BorderThickness="0" Foreground="White" Click="closeButton_click"/>
-            <TextBlock Margin="20 5 0 0" x:Name="DescriptionTextblock" Grid.Row="1" Text="Description Text" Foreground="WhiteSmoke" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <TextBlock Margin="40 5 0 0" x:Name="ExtraDetailTextblock" Grid.Row="2" Text="Extra Detail Text" Foreground="LightGray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="DescriptionTextBlock" Margin="20 5 0 0" Grid.Row="1" Text="{Binding DescriptionText}" Foreground="WhiteSmoke" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="ExtraDetailTextBlock" Margin="40 5 0 0" Grid.Row="2" Text="{Binding ExtraDetailText}" Foreground="LightGray" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Left"/>
             <Grid>
 
             </Grid>

@@ -22,7 +22,7 @@ namespace Reminderer.Framework
         {
         }
 
-        public void ScheduleTaskForInterval(DateTime dateTime, double interval, Action action)
+        public Timer ScheduleTaskForInterval(DateTime dateTime, double interval, Action action)
         {
             DateTime now = DateTime.Now;
             TimeSpan delay = new TimeSpan();
@@ -33,12 +33,18 @@ namespace Reminderer.Framework
             {
                 delay = dateTime - now;
             }
+            delay = TimeSpan.FromMinutes(delay.Seconds / 60);
 
+            //when debugging, delay / 60
+            TimeSpan intervalSpan = interval == 0 ? TimeSpan.FromMilliseconds(-1) : TimeSpan.FromMinutes(interval / 60);
+            Console.WriteLine($"intervalSpan: {intervalSpan}");
             var timer = new Timer(x =>
             {
                 action.Invoke();
-            }, null, delay, TimeSpan.FromHours(interval));
+            }, null, delay, intervalSpan);
             _timers.Add(timer);
+            return timer;
         }
+
     }
 }

@@ -24,10 +24,9 @@ namespace Reminderer
             databaseManager = new DatabaseManager("Test1");
             Schedules = new ObservableCollection<Task>();
             Reminders = new ObservableCollection<Task>();
-
+            _taskNotificationDict = new Dictionary<int, Timer>();
             createTasksTable();
         }
-
         public static RemindererManager Instance
         {
             get { return _instance; }
@@ -46,7 +45,7 @@ namespace Reminderer
             get { return _reminders; }
             set { _reminders = value; }
         }
-        private List<Task> _tasksToNotify;
+        private Dictionary<int, Timer> _taskNotificationDict;
 
         #endregion
 
@@ -68,6 +67,63 @@ namespace Reminderer
                 }
             }
         }
+
+        private void removeFromNotifyList(string taskId)
+        {
+
+        }
+
+        private void addToNotifyIfNeeded(Task task)
+        {
+            //Check if reminder or schedule
+            //Only requires heavy checking on reminder 
+            if (task.Type == Task.TaskType.Reminder)
+            {
+                if(task.ReminderSetting == 1)
+                {
+                    NotifyFromNow(task);
+                }else if(task.ReminderSetting == 2)
+                {
+                    NotifyEveryInterval(task);
+                }else if(task.ReminderSetting == 3)
+                {
+                    NotifyAtThisTime(task);
+                }
+            }
+            else
+            {
+                //Only add notifications for when the user wants a notification for it.
+            }
+            
+        }
+        //Timer parameters, (callback,null,timeUntilCallBack,RepeatInterval)
+
+        private void notifyForTask(object state)
+        {
+        }
+
+        private void NotifyFromNow(Task task)
+        {
+            NotificationForDelayAndInterval(0, task);
+        }
+
+        private void NotifyEveryInterval(Task task)
+        {
+            NotificationForDelayAndInterval((DateTime.Now.Hour - task.DesiredDateTime.Hour) * 60 + (task.DesiredDateTime.Minute - DateTime.Now.Minute), task);
+        }
+        private void NotifyAtThisTime(Task task)
+        {
+            NotificationForDelayAndInterval(60 * 24, task);
+        }
+
+        private void NotificationForDelayAndInterval(double interval, Task task)
+        {
+            var timer = TimerService.instance.ScheduleTaskForInterval(task.DesiredDateTime, interval, () =>
+            {
+                Mediator.Broadcast(Constants.FireNotification, task);
+            });
+            _taskNotificationDict[task.TaskId] = timer;
+        }
         #endregion
 
         #region Database Related Methods
@@ -79,7 +135,7 @@ namespace Reminderer
             foreach(DataRow dr in ds.Tables[0].Rows)
             {
                 Task t = taskFromDataRow(dr);
-                if (t.Type == 1)
+                if (t.Type == Task.TaskType.Reminder)
                 {
                     Reminders.Add(t);
                 }
@@ -88,7 +144,7 @@ namespace Reminderer
                     Schedules.Add(t);
                 }
             }
-
+            updateTasksToNotifyList();
         }
         private void createTasksTable()
         {
@@ -128,11 +184,12 @@ namespace Reminderer
             {
                 //exception handling
             }
+            removeFromNotifyList(id);
         }
         public void EditTask(Task task)
         {
             Task prevTask;
-            if (task.Type == 1)
+            if (task.Type == Task.TaskType.Reminder)
             {
                 prevTask = Reminders.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
             }
@@ -151,10 +208,12 @@ namespace Reminderer
             {
                 //exception handling
             }
+
+            addToNotifyIfNeeded(task);
         }
         public void CreateTask(Task task)
         {
-            if (task.Type == 1)
+            if (task.Type == Task.TaskType.Reminder)
             {
                 Reminders.Add(task);
             }
@@ -169,6 +228,8 @@ namespace Reminderer
             {
                 //exception handling
             }
+
+            addToNotifyIfNeeded(task);
         }
         private Dictionary<string, object> dictionaryRepresentationForTask(Task task)
         {
@@ -195,7 +256,7 @@ namespace Reminderer
             t.DesiredDateTime = DateTime.FromBinary(long.Parse(dr["DesiredDateTime"].ToString()));
             t.ShouldRemind = int.Parse(dr["ShouldRemind"].ToString()) != 0;
             t.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
-            t.Type = int.Parse(dr["Type"].ToString());
+            t.Type = int.Parse(dr["Type"].ToString()) == 1 ? Task.TaskType.Reminder : Task.TaskType.Schedule;
             t.TaskId = int.Parse(dr["TaskId"].ToString());
 
             var setting = int.Parse(dr["ReminderSetting"].ToString());

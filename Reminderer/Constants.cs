@@ -13,5 +13,6 @@ namespace Reminderer
         public const string ShowAddEditView = "ShowAddEditView";
         public const string TasksUpdated = "TasksUpdated";
         public const string TasksTable = "Tasks";
+        public const string FireNotification = "FireNotification";
     }
 }

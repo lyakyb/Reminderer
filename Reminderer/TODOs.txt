@@ -3,7 +3,7 @@
 
 5. Attach notifications to alarm/schedules using Timer
 - calculate and see if there are any notifications that need to be made today. add them to the scheduler with notification firing. 
---> update AddEditView to disable repeating days IsEnabled. potentially grey out the entire area?
+
 --> on DELETE, if the notification is on, the notification should get deleted as well.
 --> future addition: add property remind before due date and give option for notification x days before due date
 

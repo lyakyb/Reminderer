@@ -22,7 +22,7 @@ namespace Reminderer.Views
                 _newTask = value;
                 if (_newTask != null)
                     _newTask.PropertyChanged += Task_PropertyChanged;
-                ReminderSelected = value.Type == 1 ? true : false;
+                ReminderSelected = value.Type == Task.TaskType.Reminder ? true : false;
             }
         }
 
@@ -67,11 +67,16 @@ namespace Reminderer.Views
             //adding logic
             NewTask.DesiredDateTime = NewTask.DesiredDateTime.AddHours(DesiredHour);
             NewTask.DesiredDateTime = NewTask.DesiredDateTime.AddMinutes(DesiredMinute);
-            NewTask.Type = ReminderSelected ? 1 : 0;
+            NewTask.Type = ReminderSelected ? Task.TaskType.Reminder : Task.TaskType.Schedule;
 
             if (!NewTask.ShouldRepeat)
             {
                 NewTask.RepeatingDays.RemoveRange(0, NewTask.RepeatingDays.Count);
+            }
+
+            if (NewTask.Type == Task.TaskType.Reminder && !NewTask.IsAtSpecificTime)
+            {
+                NewTask.DesiredDateTime = DateTime.Now.AddHours(DesiredHour).AddMinutes(DesiredMinute);
             }
 
             if (IsEditing)
@@ -82,6 +87,7 @@ namespace Reminderer.Views
             {
                 RemindererManager.Instance.CreateTask(NewTask);
             }
+
 
             NewTask = new Task();
             IsEditing = false;
