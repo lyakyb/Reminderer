@@ -55,6 +55,10 @@ namespace Reminderer
             foreach(Task t in Schedules)
             {
                 // check and see if notification prior to due date is set.
+                if (t.ShouldRemind && t.NumDaysBeforeNotify == t.TimeUntilDesiredDate().Days + 1)
+                {
+                    NotifyForSchedule(t);
+                }
             }
             foreach(Task t in Reminders)
             {
@@ -105,16 +109,23 @@ namespace Reminderer
             }
             else
             {
-                //Only add notifications for when the user wants a notification for it.
+                if (task.ShouldRemind)
+                {
+                    NotifyForSchedule(task);
+                }
             }
             
         }
         //Timer parameters, (callback,null,timeUntilCallBack,RepeatInterval)
-
-        private void notifyForTask(object state)
+        private void NotifyForSchedule(Task task)
         {
+            var timer = TimerService.instance.ScheduleTaskFromNow(1, 0, () =>
+            {
+                Mediator.Broadcast(Constants.FireNotification, task);
+                RemoveFromNotifyListIfNeeded(task);
+            });
+            _taskNotificationDict[task.TaskId] = timer;
         }
-
         private void NotifyFromNow(Task task)
         {
             NotificationForDelayAndInterval(0, task);

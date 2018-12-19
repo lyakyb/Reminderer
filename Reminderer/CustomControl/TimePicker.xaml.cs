@@ -20,7 +20,6 @@ namespace Reminderer.CustomControl
     /// </summary>
     public partial class TimePicker : UserControl
     {
-        private ContentControl _focusedButton;
         private bool _hourBtnFocused;
         private bool _minBtnFocused;
         private int _minuteVal;

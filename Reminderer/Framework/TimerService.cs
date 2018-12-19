@@ -22,6 +22,17 @@ namespace Reminderer.Framework
         {
         }
 
+        public Timer ScheduleTaskFromNow(int hour, int min, Action action)
+        {
+            TimeSpan delaySpan = TimeSpan.FromMinutes(hour * 60 + min);
+            var timer = new Timer(x =>
+            {
+                action.Invoke();
+            }, null, delaySpan, TimeSpan.FromMilliseconds(-1));
+            _timers.Add(timer);
+            return timer;
+        }
+
         public Timer ScheduleTaskForInterval(DateTime dateTime, double interval, Action action)
         {
             //compare desiredTime and time now.
@@ -40,7 +51,6 @@ namespace Reminderer.Framework
 
             //when debugging, delay / 60
             TimeSpan intervalSpan = interval == 0 ? TimeSpan.FromMilliseconds(-1) : TimeSpan.FromMinutes(interval / 60);
-            Console.WriteLine($"intervalSpan: {intervalSpan}");
             var timer = new Timer(x =>
             {
                 action.Invoke();

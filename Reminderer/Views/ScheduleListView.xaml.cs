@@ -10,7 +10,6 @@ namespace Reminderer.Views
     public partial class ScheduleListView : UserControl
     {
 
-        private object task;
 
         public ScheduleListView()
         {
