@@ -90,7 +90,16 @@ namespace Reminderer.Views
 
         private bool canExecuteAdd(object obj)
         {
-            return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null;
+            if (ReminderSelected)
+            {
+                return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null && NewTask.ReminderSetting != 0;
+                
+            } else
+            {
+                return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null;
+            }
+
+
         }
 
     }

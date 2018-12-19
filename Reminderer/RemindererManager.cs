@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Reminderer
 {
@@ -45,28 +46,31 @@ namespace Reminderer
             get { return _reminders; }
             set { _reminders = value; }
         }
-        private object timer;
-        private ObservableCollection<object> _notifications;
-        private int _tickRate;
+        private List<Task> _tasksToNotify;
 
         #endregion
 
-        #region Methods
-        private void updateNotifications()
+        #region Alarm Related Methods
+        private void updateTasksToNotifyList()
         {
+            foreach(Task t in Schedules)
+            {
+                // check and see if notification prior to due date is set.
+            }
+            foreach(Task t in Reminders)
+            {
+                if (t.IsFromSavedTime)
+                {
 
+                }else if (t.IsAtSetInterval)
+                {
+                    
+                }
+            }
         }
+        #endregion
 
-        private void calculateAppropriateTickRate()
-        {
-
-        }
-
-        private void updateTickRate()
-        {
-
-        }
-        
+        #region Database Related Methods
         public void LoadTasks()
         {
             string s = $"SELECT * FROM {Constants.TasksTable}";
@@ -86,7 +90,6 @@ namespace Reminderer
             }
 
         }
-
         private void createTasksTable()
         {
             string s  = $"SELECT name FROM sqlite_master WHERE name='{Constants.TasksTable}'";
@@ -99,11 +102,10 @@ namespace Reminderer
                 return;
             }
 
-            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int, IsFromSavedTime integer, IsAtSetInterval integer)";
+            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int, ReminderSetting int)";
 
             databaseManager.ExecuteNonQueryCommand(s);
         }
-
         public void DeleteTask(Task task)
         {
             if (Reminders.Contains(task))
@@ -116,7 +118,6 @@ namespace Reminderer
             }
             deleteTaskWithId(task.TaskId.ToString());
         }
-
         private void deleteTaskWithId(string id)
         {
             string s = $"DELETE FROM {Constants.TasksTable} WHERE taskId=@taskIdParam";
@@ -128,7 +129,6 @@ namespace Reminderer
                 //exception handling
             }
         }
-
         public void EditTask(Task task)
         {
             Task prevTask;
@@ -142,7 +142,7 @@ namespace Reminderer
             }
             prevTask = task;
 
-            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam, IsFromSavedTime=@fromTimeParam, IsAtSetInterval=@setIntervalParam WHERE taskId=@taskIdParam";
+            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam, ReminderSetting=@settingParam WHERE taskId=@taskIdParam";
             var dict = dictionaryRepresentationForTask(task);
             dict.Add("@taskIdParam", task.TaskId);
             var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
@@ -152,7 +152,6 @@ namespace Reminderer
                 //exception handling
             }
         }
-
         public void CreateTask(Task task)
         {
             if (task.Type == 1)
@@ -163,7 +162,7 @@ namespace Reminderer
             {
                 Schedules.Add(task);
             }
-            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type, IsFromSavedTime, IsAtSetInterval) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam,@fromTimeParam,@setIntervalParam)";
+            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type, ReminderSetting) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam,@settingParam)";
                         
             var result = databaseManager.InsertUpdateDeleteWithParams(s, dictionaryRepresentationForTask(task));
             if (result != 1)
@@ -171,7 +170,6 @@ namespace Reminderer
                 //exception handling
             }
         }
-
         private Dictionary<string, object> dictionaryRepresentationForTask(Task task)
         {
             task.ExtraDetail = task.ExtraDetail == null ? "-" : task.ExtraDetail;
@@ -185,12 +183,10 @@ namespace Reminderer
             dict.Add("@repeatParam", task.ShouldRepeat);
             dict.Add("@daysParam", repeatingDays);
             dict.Add("@typeParam", task.Type);
-            dict.Add("@fromTimeParam", task.IsFromSavedTime);
-            dict.Add("@setIntervalParam", task.IsAtSetInterval);
+            dict.Add("@settingParam", task.ReminderSetting);            
 
             return dict;
         }
-
         private Task taskFromDataRow(DataRow dr)
         {
             Task t = new Task();
@@ -201,8 +197,31 @@ namespace Reminderer
             t.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
             t.Type = int.Parse(dr["Type"].ToString());
             t.TaskId = int.Parse(dr["TaskId"].ToString());
-            t.IsFromSavedTime = int.Parse(dr["IsFromSavedTime"].ToString()) != 0;
-            t.IsAtSetInterval = int.Parse(dr["IsAtSetInterval"].ToString()) != 0;
+
+            var setting = int.Parse(dr["ReminderSetting"].ToString());
+            switch (setting)
+            {
+                case 1:
+                    t.IsFromSavedTime = true;
+                    t.IsAtSetInterval = false;
+                    t.IsAtSpecificTime = false;
+                    break;
+                case 2:
+                    t.IsFromSavedTime = false;
+                    t.IsAtSetInterval = true;
+                    t.IsAtSpecificTime = false;
+                    break;
+                case 3:
+                    t.IsFromSavedTime = false;
+                    t.IsAtSetInterval = false;
+                    t.IsAtSpecificTime = true;
+                    break;
+                default:
+                    t.IsFromSavedTime = false;
+                    t.IsAtSetInterval = false;
+                    t.IsAtSpecificTime = false;
+                    break;
+            }
 
             var days = dr["RepeatingDays"].ToString().Split(',');
             if (days != null && days.Count() > 0)
@@ -220,7 +239,6 @@ namespace Reminderer
 
             return t;
         }
-
         #endregion
 
     }

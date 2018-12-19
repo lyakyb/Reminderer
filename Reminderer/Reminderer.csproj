@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="Framework\DatabaseManager.cs" />
     <Compile Include="Framework\IDatabaseManager.cs" />
+    <Compile Include="Framework\TimerService.cs" />
     <Compile Include="Framework\Mediator.cs" />
     <Compile Include="IRemindererViewModel.cs" />
     <Compile Include="NavigationViewModel.cs" />

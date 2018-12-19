@@ -19,6 +19,7 @@ namespace Reminderer.Models
         private List<int> _repeatingDays; // 0~6, Sun~Sat
         private bool _isFromSavedTime;
         private bool _isAtSetInterval;
+        private bool _isAtSpecificTime;
         private int _type;
         private int _taskId;
 
@@ -115,16 +116,36 @@ namespace Reminderer.Models
             }
         }
 
+        public int ReminderSetting
+        {
+            get {
+                if (IsFromSavedTime)
+                {
+                    return 1;
+                }else if(IsAtSetInterval)
+                {
+                    return 2;
+                } else if(IsAtSpecificTime)
+                {
+                    return 3;
+                }
+                return 0;
+            }
+        }
         public bool IsFromSavedTime
         {
             get { return _isFromSavedTime; }
             set { _isFromSavedTime = value; OnPropertyChanged(); }
         }
-
         public bool IsAtSetInterval
         {
             get { return _isAtSetInterval; }
             set { _isAtSetInterval = value; OnPropertyChanged(); }
+        }
+        public bool IsAtSpecificTime
+        {
+            get { return _isAtSpecificTime; }
+            set { _isAtSpecificTime = value; OnPropertyChanged(); }
         }
 
         public string RepeatingDaysText
