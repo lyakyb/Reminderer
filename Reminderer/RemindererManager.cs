@@ -62,12 +62,13 @@ namespace Reminderer
             }
             foreach(Task t in Reminders)
             {
-                if (t.IsFromSavedTime)
+                if (t.IsFromSavedTime && !TimeAheadNow(t.DesiredDateTime))
                 {
-
-                }else if (t.IsAtSetInterval)
+                    NotifyFromNow(t);
+                }
+                else if (t.IsAtSpecificTime && t.ShouldNotifyToday() && !TimeAheadNow(t.DesiredDateTime))
                 {
-                    
+                    NotifyAtThisTime(t);
                 }
             }
         }
@@ -114,9 +115,22 @@ namespace Reminderer
                     NotifyForSchedule(task);
                 }
             }
-            
         }
-        //Timer parameters, (callback,null,timeUntilCallBack,RepeatInterval)
+
+        private bool TimeAheadNow(DateTime dateTime)
+        {
+            if (dateTime.Hour > DateTime.Now.Hour)
+            {
+                return false;
+            }
+            else if (dateTime.Hour == DateTime.Now.Hour && dateTime.Minute > DateTime.Now.Minute)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private void NotifyForSchedule(Task task)
         {
             var timer = TimerService.instance.ScheduleTaskFromNow(1, 0, () =>
@@ -130,7 +144,6 @@ namespace Reminderer
         {
             NotificationForDelayAndInterval(0, task);
         }
-
         private void NotifyEveryInterval(Task task)
         {
             NotificationForDelayAndInterval(task.DesiredDateTime.Hour * 60 + task.DesiredDateTime.Minute, task);
@@ -139,7 +152,6 @@ namespace Reminderer
         {
             NotificationForDelayAndInterval(60 * 24, task);
         }
-
         private void NotificationForDelayAndInterval(double interval, Task task)
         {
             var timer = TimerService.instance.ScheduleTaskForInterval(task.DesiredDateTime, interval, () =>

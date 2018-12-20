@@ -173,6 +173,39 @@ namespace Reminderer.Models
             set { _numDaysBeforeNotify = value; OnPropertyChanged(); }
         }
 
+        public bool ShouldNotifyToday()
+        {
+            if (RepeatingDays.Count == 7 || RepeatingDays.Contains(DayOfWeekConverter(DateTime.Now.DayOfWeek)))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private int DayOfWeekConverter(DayOfWeek dayOfWeek)
+        {
+            switch (dayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    return 0;
+                case DayOfWeek.Monday:
+                    return 1;
+                case DayOfWeek.Tuesday:
+                    return 2;
+                case DayOfWeek.Wednesday:
+                    return 3;
+                case DayOfWeek.Thursday:
+                    return 4;
+                case DayOfWeek.Friday:
+                    return 5;
+                case DayOfWeek.Saturday:
+                    return 6;
+                default:
+                    return -1;
+            }
+        }
+
         public string RepeatingDaysText
         {
             get

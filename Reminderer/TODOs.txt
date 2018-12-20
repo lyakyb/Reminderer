@@ -1,7 +1,6 @@
 ﻿
-
 Update when loading tasks
-- schedules that need reminder on
+- schedules that need reminder on ===> 12/19 left off WIP
 - Reminders are all off by default except for daily reminders (so for every interval it would start firing as soon as user turns it on)
 - Check date to see if notification is needed
 1.reminders on repeat 2.schedules with notification on 3. Reminders with interval repeat

@@ -77,6 +77,7 @@ namespace Reminderer.CustomControl
             if (btn.IsChecked == true && !_selectedDays.Contains(mappedVal))
             {
                 _selectedDays.Add(mappedVal);
+
             } else if (btn.IsChecked == false && _selectedDays.Contains(mappedVal))
             {
                 _selectedDays.Remove(mappedVal);
