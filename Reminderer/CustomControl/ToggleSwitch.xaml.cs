@@ -40,7 +40,6 @@ namespace Reminderer.CustomControl
 
         public ToggleSwitch()
         {
-            _toggled = false;
             InitializeComponent();
             this.SetOffColorFromHexString(DEFAULT_OFF_COLOR_HEX_VALUE);
             this.SetOnColorFromHexString(DEFAULT_ON_COLOR_HEX_VALUE);
@@ -50,7 +49,15 @@ namespace Reminderer.CustomControl
             Loaded += delegate
             {
                 calculateDimensions();
-                innerCircle.Fill = new SolidColorBrush(this.OffColor);
+                _toggled = InitialValue;
+                if (InitialValue)
+                {
+                    innerCircle.Fill = new SolidColorBrush(OnColor);
+                }
+                else
+                {
+                    innerCircle.Fill = new SolidColorBrush(OffColor);
+                }
             };
         }
 
@@ -75,11 +82,19 @@ namespace Reminderer.CustomControl
             _offPosMargin = new Thickness(offMarginLeft, desiredGap, offMarginRight, desiredGap);
             _onPosMargin = new Thickness(onMarginLeft, desiredGap, onMarginRight, desiredGap);
 
-            toggleEllipse.Margin = _offPosMargin;
-
             _deltaX = onMarginLeft - onMarginRight - toggleEllipse.Width;
 
-            textDetail.Text = this.OffText;
+            if (InitialValue)
+            {
+                var m = new Thickness(offMarginLeft + _deltaX, desiredGap, offMarginRight - _deltaX, desiredGap);
+                toggleEllipse.Margin = m;
+                textDetail.Text = OnText;
+            }
+            else
+            {
+                toggleEllipse.Margin = _offPosMargin;
+                textDetail.Text = this.OffText;
+            }
         }
 
         private void clicked(object sender, RoutedEventArgs e)
@@ -87,8 +102,16 @@ namespace Reminderer.CustomControl
             if (_toggled)
             {
                 DoubleAnimation db = new DoubleAnimation();
-                db.From = _deltaX;
-                db.To = 0;
+                if (InitialValue)
+                {
+                    db.From = 0;
+                    db.To = -_deltaX;
+                }
+                else
+                {
+                    db.From = _deltaX;
+                    db.To = 0;
+                }
                 db.Duration = new Duration(TimeSpan.FromSeconds(0.5));
                 TranslateTransform tt = new TranslateTransform();
                 toggleEllipse.RenderTransform = tt;
@@ -107,8 +130,15 @@ namespace Reminderer.CustomControl
             } else
             {
                 DoubleAnimation db = new DoubleAnimation();
-                db.From = 0;
-                db.To = _deltaX;
+                if (InitialValue)
+                {
+                    db.From = -_deltaX;
+                    db.To = 0;
+                } else
+                {
+                    db.From = 0;
+                    db.To = _deltaX;
+                }
                 db.Duration = new Duration(TimeSpan.FromSeconds(0.5));
                 TranslateTransform tt = new TranslateTransform();
                 toggleEllipse.RenderTransform = tt;
@@ -180,6 +210,18 @@ namespace Reminderer.CustomControl
         public static readonly DependencyProperty ToggleProperty = DependencyProperty.Register(
           "IsToggled", typeof(Boolean), typeof(ToggleSwitch), new PropertyMetadata(false));
 
+        public Boolean InitialValue
+        {
+            get { return (Boolean)this.GetValue(InitialValueProperty); }
+            set
+            {
+                this.SetValue(InitialValueProperty, value);
+                IsToggled = value;
+                _toggled = value;
+            }
+        }
+        public static readonly DependencyProperty InitialValueProperty = DependencyProperty.Register(
+          "InitialValue", typeof(Boolean), typeof(ToggleSwitch), new PropertyMetadata(false));
 
         #endregion
 

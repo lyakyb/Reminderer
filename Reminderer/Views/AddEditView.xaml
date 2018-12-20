@@ -120,7 +120,7 @@
 
                 <RadioButton Grid.Row="0" Grid.Column="0" Content="From now" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsFromSavedTime}"/>
                 <RadioButton Grid.Row="0" Grid.Column="1" Content="Every interval" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsAtSetInterval}"/>
-                <RadioButton x:Name="AtThisTimeRadioButton" Grid.Row="0" Grid.Column="2" Content="At this time" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsAtSpecificTime}"/>
+                <RadioButton x:Name="AtThisTimeRadioButton" Grid.Row="0" Grid.Column="2" Content="At this time" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsChecked="{Binding NewTask.IsAtSpecificTime}" Click="AtThisTimeRadioButton_Click"/>
 
                 <DatePicker x:Name="DatePicker" Grid.Row="0" Grid.ColumnSpan="6" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5 5 5 5" DisplayDateStart="{x:Static sys:DateTime.Now}" SelectedDate="{Binding NewTask.DesiredDateTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DatePicker.Style>
@@ -151,7 +151,7 @@
                     <ColumnDefinition Width="0.2*"/>
                     <ColumnDefinition Width="0.4*"/>
                 </Grid.ColumnDefinitions>
-                <customControl:ToggleSwitch x:Name="RemindToggleSwitch" Grid.Row="1" Grid.Column="1" IsToggled="{Binding Path=NewTask.ShouldRemind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="RemindToggleSwitch_MouseLeftButtonDown"/>
+                <customControl:ToggleSwitch x:Name="RemindToggleSwitch" Grid.Row="1" Grid.Column="1" InitialValue="True" IsToggled="{Binding Path=NewTask.ShouldRemind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="RemindToggleSwitch_MouseLeftButtonDown"/>
             </Grid>
 
 
