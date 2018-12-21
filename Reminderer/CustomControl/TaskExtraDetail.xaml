@@ -64,10 +64,7 @@
                 </TextBlock.Style>
             </TextBlock>
         </Viewbox>
-        <Viewbox Grid.Row="1" Grid.Column="2" >
-            <TextBlock Text="Repeats on: "/>
-        </Viewbox>
-        <Viewbox Grid.Row="1" Grid.Column="3" >
+        <Viewbox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
             <TextBlock Text="{Binding RepeatingDaysText}"/>
         </Viewbox>
 

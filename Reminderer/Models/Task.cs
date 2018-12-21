@@ -206,14 +206,68 @@ namespace Reminderer.Models
             }
         }
 
+        public string DesiredDateTimeText
+        {
+            get
+            {
+                if (Type == TaskType.Schedule)
+                {
+                    return DesiredDateTime.ToLongDateString();
+                }
+                else
+                {
+                    if (IsFromSavedTime)
+                    {
+                        var hourDiff = DesiredDateTime.Hour - DateTime.Now.Hour;
+                        var minDiff = DesiredDateTime.Minute - DateTime.Now.Minute;
+                        if (minDiff < 0) minDiff = 0;
+
+                        return $"Notifying in {hourDiff} hours and {minDiff}minutes";
+                    }
+                    else if (IsAtSetInterval)
+                    {
+                        return $"Notifies Every {DesiredDateTime.Hour} hours and {DesiredDateTime.Minute} minutes";                        
+                    }
+                    else if (IsAtSpecificTime)
+                    {
+                        string s = "Notifying";
+                        if (DesiredDateTime.Hour > 12)
+                        {
+                            s = $"{s} at {DesiredDateTime.Hour - 12}:{DesiredDateTime.Minute} PM"; 
+                        } else if (DesiredDateTime.Hour == 12)
+                        {
+                            s = $"{s} at 12:{DesiredDateTime.Minute} PM";
+                        }
+                        else 
+                        {
+                            s = $"{s} at {DesiredDateTime.Hour}:{DesiredDateTime.Minute} AM";
+                        }
+                        return s;
+                    }
+
+                                                                                           /*     Long date pattern: "dddd, MMMM dd, yyyy"
+                                                                            Long date string:  "Wednesday, May 16, 2001"
+                                                                            Long time string:  "3:02:15 AM"
+                                                                            Short date string:  "5/16/2001"
+                                                                            Short time string:  "3:02 AM"
+                                                                                                    */
+                }
+                return "";
+            }
+        }
         public string RepeatingDaysText
         {
             get
             {
-                if (RepeatingDays == null || RepeatingDays.Count == 0)
-                    return "-";
+                if (Type == TaskType.Schedule && ShouldRemind && NumDaysBeforeNotify >= 0)
+                {
+                    return $"Notifying {NumDaysBeforeNotify} days before D-Day";
+                }
 
-                string text = repeatingDayConverter(RepeatingDays.First());
+                if (RepeatingDays == null || RepeatingDays.Count == 0)
+                    return "Does not repeat";
+
+                string text = $"Repeats on: {repeatingDayConverter(RepeatingDays.First())}";
                 
                 for (int i=1; i<RepeatingDays.Count; i++)
                 {

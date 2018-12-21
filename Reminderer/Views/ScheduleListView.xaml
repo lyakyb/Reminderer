@@ -75,7 +75,7 @@
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Description" Width="Auto" MinWidth="250" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}" />
-                <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>
+                <DataGridTextColumn Header="Time" Width="*" Binding="{Binding DesiredDateTimeText}"/>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
@@ -99,7 +99,7 @@
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Description" MinWidth="250" Width="Auto" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}"/>
-                <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTime}"/>
+                <DataGridTextColumn Header="Time" Width="*" MaxWidth="150" Binding="{Binding DesiredDateTimeText}"/>
                 <DataGridTextColumn Header="Until" Width="*" Binding="{Binding TimeUntilDesiredDateText}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
