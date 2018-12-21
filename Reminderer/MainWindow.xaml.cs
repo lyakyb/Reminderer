@@ -5,6 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using Reminderer.Views;
 using Reminderer.CustomControl;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace Reminderer
 {
@@ -16,6 +19,48 @@ namespace Reminderer
         public MainWindow()
         {
             InitializeComponent();
+
+
+
+            var iconStream = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Images/icon.png")).Stream;
+            var iconBitmap = new Bitmap(iconStream);
+
+            NotifyIcon notifyIcon = new NotifyIcon
+            {
+                Icon = System.Drawing.Icon.FromHandle(iconBitmap.GetHicon()),
+                Visible = true
+            };
+            notifyIcon.DoubleClick += delegate
+            {
+                this.Show();
+                this.WindowState = WindowState.Normal;
+            };
+
+            System.Windows.Forms.ContextMenu cm = new System.Windows.Forms.ContextMenu();
+            
+            cm.MenuItems.Add("Exit", (s,e)=>
+            {
+                System.Windows.Application.Current.Shutdown();
+                notifyIcon.Visible = false;
+                notifyIcon.Dispose();
+            });
+
+            notifyIcon.ContextMenu = cm;
         }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+            this.WindowState = WindowState.Minimized;
+
+            base.OnClosing(e);
+        }
+
     }
 }
