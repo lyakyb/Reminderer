@@ -9,8 +9,8 @@ namespace Reminderer.Views
     class ScheduleListViewModel : BaseViewModel, IRemindererViewModel
     {
         private IList<Task> _tasks;
-        private IList<Task> _reminders;
-        private IList<Task> _schedules;
+        private IList<Reminder> _reminders;
+        private IList<Schedule> _schedules;
         
         public ScheduleListViewModel()
         {
@@ -63,7 +63,14 @@ namespace Reminderer.Views
         private void executeDeleteCommand(object obj)
         {
             if (obj == null) return;
-            RemindererManager.Instance.DeleteTask((Task)obj);
+            if (obj.GetType() == typeof(Reminder))
+            {
+                RemindererManager.Instance.DeleteReminder((Reminder)obj);
+            }
+            else if (obj.GetType() == typeof(Schedule))
+            {
+                RemindererManager.Instance.DeleteSchedule((Schedule)obj);
+            }
         }
 
         private bool canExecuteDeleteCommand(object obj)
@@ -84,13 +91,13 @@ namespace Reminderer.Views
             set { _tasks = value; }
         }
 
-        public IList<Task> Reminders
+        public IList<Reminder> Reminders
         {
             get { return _reminders; }
             set { _reminders = value; OnPropertyChanged("Reminders"); }
         }
 
-        public IList<Task> Schedules
+        public IList<Schedule> Schedules
         {
             get { return _schedules; }
             set { _schedules = value; OnPropertyChanged("Schedules"); }

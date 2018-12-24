@@ -15,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -83,8 +85,11 @@
     <Compile Include="Framework\TimerService.cs" />
     <Compile Include="Framework\Mediator.cs" />
     <Compile Include="IRemindererViewModel.cs" />
+    <Compile Include="Models\Reminder.cs" />
+    <Compile Include="Models\Schedule.cs" />
     <Compile Include="NavigationViewModel.cs" />
     <Compile Include="RemindererManager.cs" />
+    <Compile Include="Repositories\ITasksRepository.cs" />
     <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>
     </Compile>
@@ -183,6 +188,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\notificationOff.png" />
+    <Resource Include="Images\notificationOn.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

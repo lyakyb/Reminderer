@@ -8,11 +8,13 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows.Data;
 
 namespace Reminderer
 {
     public class RemindererManager
     {
+        private static object _lock = new object();
         //TODO: would it be better to store everything locally and only update to DB on app close/open?  
         private static readonly RemindererManager _instance = new RemindererManager();
         private DatabaseManager databaseManager;
@@ -22,10 +24,14 @@ namespace Reminderer
         private RemindererManager()
         {
             databaseManager = new DatabaseManager("Test1");
-            Schedules = new ObservableCollection<Task>();
-            Reminders = new ObservableCollection<Task>();
+            Schedules = new ObservableCollection<Schedule>();
+            Reminders = new ObservableCollection<Reminder>();
             _taskNotificationDict = new Dictionary<int, Timer>();
-            CreateTasksTable();
+            BindingOperations.EnableCollectionSynchronization(Schedules, _lock);
+            BindingOperations.EnableCollectionSynchronization(Reminders, _lock);
+            BindingOperations.EnableCollectionSynchronization(_taskNotificationDict, _lock);
+            CreateRemindersTable();
+            CreateSchedulesTable();
         }
         public static RemindererManager Instance
         {
@@ -33,42 +39,43 @@ namespace Reminderer
         }
 
         #region Properties
-        private ObservableCollection<Task> _schedules;
-        public ObservableCollection<Task> Schedules
+        private ObservableCollection<Schedule> _schedules;
+        public ObservableCollection<Schedule> Schedules
         {
             get { return _schedules; }
             set { _schedules = value; }
         }
-        private ObservableCollection<Task> _reminders;
-        public ObservableCollection<Task> Reminders
+        private ObservableCollection<Reminder> _reminders;
+        public ObservableCollection<Reminder> Reminders
         {
             get { return _reminders; }
             set { _reminders = value; }
         }
         private Dictionary<int, Timer> _taskNotificationDict;
 
+
         #endregion
 
         #region Alarm Related Methods
         private void updateTasksToNotifyList()
         {
-            foreach(Task t in Schedules)
+            foreach(Schedule s in Schedules)
             {
                 // check and see if notification prior to due date is set.
-                if (t.ShouldRemind && t.NumDaysBeforeNotify == t.TimeUntilDesiredDate().Days + 1)
+                if (s.ShouldRemind && s.ShouldNotifyToday())
                 {
-                    NotifyForSchedule(t);
+                    NotifyForSchedule(s);
                 }
             }
-            foreach(Task t in Reminders)
+            foreach(Reminder r in Reminders)
             {
-                if (t.IsFromSavedTime && !TimeAheadNow(t.DesiredDateTime))
+                if (r.Type == Reminder.ReminderType.IsFromSavedTime && !TimeAheadNow(r.DesiredDateTime))
                 {
-                    NotifyFromNow(t);
+                    NotifyFromNow(r);
                 }
-                else if (t.IsAtSpecificTime && t.ShouldNotifyToday() && !TimeAheadNow(t.DesiredDateTime))
+                else if (r.Type == Reminder.ReminderType.IsAtSpecificTime && r.ShouldNotifyToday() && !TimeAheadNow(r.DesiredDateTime))
                 {
-                    NotifyAtThisTime(t);
+                    NotifyAtThisTime(r);
                 }
             }
         }
@@ -84,36 +91,49 @@ namespace Reminderer
 
         private void RemoveFromNotifyListIfNeeded(Task task)
         {
-            if (task.ReminderSetting != 2 && _taskNotificationDict.ContainsKey(task.TaskId))
+            if (_taskNotificationDict.ContainsKey(task.Id))
             {
-                _taskNotificationDict[task.TaskId].Dispose();
-                _taskNotificationDict.Remove(task.TaskId);
+                if (task.GetType() == typeof(Reminder))
+                {
+                    if (((Reminder)task).Type == Reminder.ReminderType.IsAtSetInterval ||
+                        (((Reminder)task).Type == Reminder.ReminderType.IsAtSpecificTime && ((Reminder)task).RepeatingDays.Count > 0))
+                    {
+                        return;
+                    }
+                    var r = Reminders.Where(x => x.Id == task.Id).ToList().FirstOrDefault();
+                    Reminders.Remove(r);
+                    DeleteReminder((Reminder)task);
+
+                } else if (task.GetType() == typeof(Schedule))
+                {
+                    if (task.DesiredDateTime > DateTime.Now) return;
+                    Schedules.Where(x => x.Id == task.Id).ToList().All(x => Schedules.Remove(x));
+                    DeleteSchedule((Schedule)task);
+                }
+                RemoveFromNotifyList(task.Id);
+                task.NotificationOn = false;
             }
         }
 
         private void AddToNotifyIfNeeded(Task task)
         {
-            //Check if reminder or schedule
-            //Only requires heavy checking on reminder 
-            if (task.Type == Task.TaskType.Reminder)
+            if (task.GetType() == typeof(Reminder))
             {
-                if(task.ReminderSetting == 1)
+                var type = ((Reminder)task).Type;
+                if (type == Reminder.ReminderType.IsFromSavedTime)
                 {
                     NotifyFromNow(task);
-                }else if(task.ReminderSetting == 2)
+                } else if (type == Reminder.ReminderType.IsAtSetInterval)
                 {
                     NotifyEveryInterval(task);
-                }else if(task.ReminderSetting == 3)
+                } else if (type == Reminder.ReminderType.IsAtSpecificTime)
                 {
                     NotifyAtThisTime(task);
                 }
-            }
-            else
+
+            } else if (task.GetType() == typeof(Schedule) && task.ShouldRemind)
             {
-                if (task.ShouldRemind)
-                {
-                    NotifyForSchedule(task);
-                }
+                NotifyForSchedule(task);
             }
         }
 
@@ -133,12 +153,13 @@ namespace Reminderer
 
         private void NotifyForSchedule(Task task)
         {
-            var timer = TimerService.instance.ScheduleTaskFromNow(1, 0, () =>
+            var timer = TimerService.instance.ScheduleTaskFromNow(0, 1, () =>
             {
                 Mediator.Broadcast(Constants.FireNotification, task);
                 RemoveFromNotifyListIfNeeded(task);
             });
-            _taskNotificationDict[task.TaskId] = timer;
+            _taskNotificationDict[task.Id] = timer;
+            task.NotificationOn = true;
         }
         private void NotifyFromNow(Task task)
         {
@@ -159,65 +180,101 @@ namespace Reminderer
                 Mediator.Broadcast(Constants.FireNotification, task);
                 RemoveFromNotifyListIfNeeded(task);
             });
-            _taskNotificationDict[task.TaskId] = timer;
+            _taskNotificationDict[task.Id] = timer;
+            task.NotificationOn = true;
         }
         #endregion
 
         #region Database Related Methods
-        public void LoadTasks()
+        public void LoadReminders()
         {
-            string s = $"SELECT * FROM {Constants.TasksTable}";
+            string s = $"SELECT * FROM {Constants.RemindersTable}";
+            var ds = databaseManager.ReadData(s);
+            foreach (DataRow dr in ds.Tables[0].Rows)
+            {
+                Reminder reminder = ReminderFromDataRow(dr);
+                Reminders.Add(reminder);
+            }
+            updateTasksToNotifyList();
+        }
+        public void LoadSchedules()
+        {
+            string s = $"SELECT * FROM {Constants.SchedulesTable}";
 
             var ds = databaseManager.ReadData(s);
             foreach(DataRow dr in ds.Tables[0].Rows)
             {
-                Task t = taskFromDataRow(dr);
-                if (t.Type == Task.TaskType.Reminder)
+                Schedule schedule = ScheduleFromDataRow(dr);
+
+                if (schedule.DesiredDateTime > DateTime.Now)
                 {
-                    Reminders.Add(t);
-                }
-                else
+                    Schedules.Add(schedule);
+                } else
                 {
-                    Schedules.Add(t);
+                    DeleteSchedule(schedule);
                 }
             }
             updateTasksToNotifyList();
         }
-        private void CreateTasksTable()
+
+        private void CreateRemindersTable()
         {
-            string s  = $"SELECT name FROM sqlite_master WHERE name='{Constants.TasksTable}'";
+            string s = $"SELECT name FROM sqlite_master WHERE name='{Constants.RemindersTable}'";
 
             var result = databaseManager.ExecuteScalarCommand(s);
 
-            if (result != null && string.Equals(result.ToString(), Constants.TasksTable))
+            if (result != null && string.Equals(result.ToString(), Constants.RemindersTable))
             {
                 Console.WriteLine("Table exists already");
                 return;
             }
 
-            s = $"CREATE TABLE {Constants.TasksTable} (taskId INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int, ReminderSetting int, NumDaysBeforeNotify int)";
+            s = $"CREATE TABLE {Constants.RemindersTable} (id INTEGER PRIMARY KEY AUTOINCREMENT, Description Text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, ShouldRepeat integer, RepeatingDays text, Type int)";
 
             databaseManager.ExecuteNonQueryCommand(s);
         }
-        public void DeleteTask(Task task)
+        private void CreateSchedulesTable()
         {
-            if (Reminders.Contains(task))
+            string s = $"SELECT name FROM sqlite_master WHERE name='{Constants.SchedulesTable}'";
+
+            var result = databaseManager.ExecuteScalarCommand(s);
+
+            if (result != null && string.Equals(result.ToString(), Constants.SchedulesTable))
             {
-                Reminders.Remove(task);
+                Console.WriteLine("Table exists already");
+                return;
             }
-            else if (Schedules.Contains(task))
-            {
-                Schedules.Remove(task);
-            }
-            deleteTaskWithId(task.TaskId.ToString());
-            RemoveFromNotifyList(task.TaskId);
+
+            s = $"CREATE TABLE {Constants.SchedulesTable} (id INTEGER PRIMARY KEY AUTOINCREMENT, Description text, ExtraDetail text, DesiredDateTime text, ShouldRemind integer, NumDaysBeforeNotify int)";
+
+            databaseManager.ExecuteNonQueryCommand(s);
         }
 
-        private void deleteTaskWithId(string id)
+        public void DeleteReminder(Reminder reminder)
         {
-            string s = $"DELETE FROM {Constants.TasksTable} WHERE taskId=@taskIdParam";
+            Reminders.Remove(reminder);
+            DeleteReminderWithId(reminder.Id.ToString());
+            RemoveFromNotifyList(reminder.Id);
+        }
+        public void DeleteSchedule(Schedule schedule)
+        {
+            Schedules.Remove(schedule);
+            DeleteScheduleWithId(schedule.Id.ToString());
+            RemoveFromNotifyList(schedule.Id);
+        }
+        private void DeleteReminderWithId(string id)
+        {
+            DeleteTaskWithId(id, Constants.RemindersTable);
+        }
+        private void DeleteScheduleWithId(string id)
+        {
+            DeleteTaskWithId(id, Constants.SchedulesTable);
+        }
+        private void DeleteTaskWithId(string id, string table)
+        {
+            string s = $"DELETE FROM {table} WHERE Id=@idParam";
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict.Add("@taskIdParam", id);
+            dict.Add("@idParam", id);
             var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
             if (result != 1)
             {
@@ -225,122 +282,126 @@ namespace Reminderer
             }
             RemoveFromNotifyList(int.Parse(id));
         }
-        public void EditTask(Task task)
+
+        public void EditReminder(Reminder reminder)
         {
-            Task prevTask;
-            RemoveFromNotifyList(task.TaskId);
-            if (task.Type == Task.TaskType.Reminder)
-            {
-                prevTask = Reminders.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
-            }
-            else
-            {
-                prevTask = Schedules.Where(t => t.TaskId == task.TaskId).FirstOrDefault();
-            }
-            prevTask = task;
+            Reminder prevReminder = Reminders.Where(r => r.Id == reminder.Id).FirstOrDefault();
+            RemoveFromNotifyList(reminder.Id);
+            string query = $"UPDATE {Constants.RemindersTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam WHERE id=@idParam";
+            var dict = DictionaryRepresentationForReminder(reminder);
 
-            string s = $"UPDATE {Constants.TasksTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, ShouldRepeat=@repeatParam, RepeatingDays=@daysParam, Type=@typeParam, ReminderSetting=@settingParam, NumDaysBeforeNotify=@numDaysParam WHERE taskId=@taskIdParam";
-            var dict = dictionaryRepresentationForTask(task);
-            dict.Add("@taskIdParam", task.TaskId);
-            var result = databaseManager.InsertUpdateDeleteWithParams(s, dict);
-
+            dict.Add("@idParam", reminder.Id);
+            var result = databaseManager.InsertUpdateDeleteWithParams(query, dict);
             if (result != 1)
             {
                 //exception handling
             }
-
-            AddToNotifyIfNeeded(task);
+            AddToNotifyIfNeeded(reminder);
         }
-        public void CreateTask(Task task)
+        public void EditSchedule(Schedule schedule)
         {
-            if (task.Type == Task.TaskType.Reminder)
-            {
-                Reminders.Add(task);
-            }
-            else if (task.Type == 0)
-            {
-                Schedules.Add(task);
-            }
-            string s = $"INSERT INTO {Constants.TasksTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type, ReminderSetting, NumDaysBeforeNotify) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam,@settingParam,@numDaysParam)";
-                        
-            var result = databaseManager.InsertUpdateDeleteWithParams(s, dictionaryRepresentationForTask(task));
+            Schedule prevSchedule = Schedules.Where(s => s.Id == schedule.Id).FirstOrDefault();
+            RemoveFromNotifyList(schedule.Id);
+            string query = $"UPDATE {Constants.SchedulesTable} SET Description=@descParam, ExtraDetail=@extParam, DesiredDateTime=@ddtParam, ShouldRemind=@remindParam, NumDaysBeforeNotify=@numDaysParam WHERE id=@idParam";
+            var dict = DictionaryRepresentationForSchedule(schedule);
+            dict.Add("@idParam", schedule.Id);
+            var result = databaseManager.InsertUpdateDeleteWithParams(query, dict);
             if (result != 1)
             {
-                //exception handling
             }
-
-            AddToNotifyIfNeeded(task);
+            AddToNotifyIfNeeded(schedule);
         }
-        private Dictionary<string, object> dictionaryRepresentationForTask(Task task)
+
+        public void CreateReminder(Reminder reminder)
+        {
+            Reminders.Add(reminder);
+            string s = $"INSERT INTO {Constants.RemindersTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, ShouldRepeat, RepeatingDays, Type) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@repeatParam,@daysParam,@typeParam)";
+            var id = databaseManager.InsertUpdateDeleteWithParamsGetLastInsertId(s, DictionaryRepresentationForReminder(reminder));
+
+            reminder.Id = id;
+
+            AddToNotifyIfNeeded(reminder);
+        }
+        public void CreateSchedule(Schedule schedule)
+        {
+            Schedules.Add(schedule);
+            string s = $"INSERT INTO {Constants.SchedulesTable} (Description, ExtraDetail, DesiredDateTime, ShouldRemind, NumDaysBeforeNotify) VALUES (@descParam,@extParam,@ddtParam,@remindParam,@numDaysParam)";
+            var id = databaseManager.InsertUpdateDeleteWithParamsGetLastInsertId(s, DictionaryRepresentationForSchedule(schedule));
+
+            schedule.Id = id;
+
+            AddToNotifyIfNeeded(schedule);
+        }
+
+
+        private Dictionary<string, object> DictionaryRepresentationForReminder(Reminder reminder)
+        {
+            var dict = DictionaryRepresentationForTask(reminder);
+            var repeatingDays = reminder.RepeatingDays != null ? string.Join(",", reminder.RepeatingDays) : "";
+            dict.Add("@daysParam", repeatingDays);
+            dict.Add("@typeParam", reminder.Type);
+            dict.Add("@repeatParam", reminder.ShouldRepeat);
+
+            return dict;
+        }
+        private Dictionary<string, object> DictionaryRepresentationForSchedule(Schedule schedule)
+        {
+            var dict = DictionaryRepresentationForTask(schedule);
+            dict.Add("@numDaysParam", schedule.NumDaysBeforeNotify);
+
+            return dict;
+        }
+        private Dictionary<string, object> DictionaryRepresentationForTask(Task task)
         {
             task.ExtraDetail = task.ExtraDetail == null ? "-" : task.ExtraDetail;
-            var repeatingDays = task.RepeatingDays != null ? string.Join(",", task.RepeatingDays) : "";
 
             Dictionary<string, object> dict = new Dictionary<string, object>();
             dict.Add("@descParam", task.Description);
             dict.Add("@extParam", task.ExtraDetail);
             dict.Add("@ddtParam", task.DesiredDateTime.ToBinary());
             dict.Add("@remindParam", task.ShouldRemind);
-            dict.Add("@repeatParam", task.ShouldRepeat);
-            dict.Add("@daysParam", repeatingDays);
-            dict.Add("@typeParam", task.Type);
-            dict.Add("@settingParam", task.ReminderSetting);
-            dict.Add("@numDaysParam", task.NumDaysBeforeNotify);
 
             return dict;
         }
-        private Task taskFromDataRow(DataRow dr)
+
+        private Reminder ReminderFromDataRow(DataRow dr)
         {
-            Task t = new Task();
-            t.Description = dr["Description"].ToString();
-            t.ExtraDetail = dr["ExtraDetail"].ToString();
-            t.DesiredDateTime = DateTime.FromBinary(long.Parse(dr["DesiredDateTime"].ToString()));
-            t.ShouldRemind = int.Parse(dr["ShouldRemind"].ToString()) != 0;
-            t.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
-            t.Type = int.Parse(dr["Type"].ToString()) == 1 ? Task.TaskType.Reminder : Task.TaskType.Schedule;
-            t.TaskId = int.Parse(dr["TaskId"].ToString());
-            t.NumDaysBeforeNotify = int.Parse(dr["NumDaysBeforeNotify"].ToString());
-
-            var setting = int.Parse(dr["ReminderSetting"].ToString());
-            switch (setting)
-            {
-                case 1:
-                    t.IsFromSavedTime = true;
-                    t.IsAtSetInterval = false;
-                    t.IsAtSpecificTime = false;
-                    break;
-                case 2:
-                    t.IsFromSavedTime = false;
-                    t.IsAtSetInterval = true;
-                    t.IsAtSpecificTime = false;
-                    break;
-                case 3:
-                    t.IsFromSavedTime = false;
-                    t.IsAtSetInterval = false;
-                    t.IsAtSpecificTime = true;
-                    break;
-                default:
-                    t.IsFromSavedTime = false;
-                    t.IsAtSetInterval = false;
-                    t.IsAtSpecificTime = false;
-                    break;
-            }
-
+            Reminder r = new Reminder();
+            r.Description = dr["Description"].ToString();
+            r.ExtraDetail = dr["ExtraDetail"].ToString();
+            r.DesiredDateTime = DateTime.FromBinary(long.Parse(dr["DesiredDateTime"].ToString()));
+            r.ShouldRemind = int.Parse(dr["ShouldRemind"].ToString()) != 0;
+            r.Id = int.Parse(dr["id"].ToString());
+            r.ShouldRepeat = int.Parse(dr["ShouldRepeat"].ToString()) != 0;
+            r.Type = (Reminder.ReminderType)int.Parse(dr["Type"].ToString());
             var days = dr["RepeatingDays"].ToString().Split(',');
             if (days != null && days.Count() > 0)
             {
                 foreach (var day in days)
                 {
                     if (string.IsNullOrWhiteSpace(day)) continue;
-                    t.RepeatingDays.Add(Convert.ToInt32(day));
+
+                    r.RepeatingDays.Add(Reminder.StringToDaysConverter(day));
                 }
             }
             else
             {
-                t.RepeatingDays = null;
+                r.RepeatingDays = null;
             }
+            return r;
+        }
+        private Schedule ScheduleFromDataRow(DataRow dr)
+        {
+            Schedule s = new Schedule();
+            s.Description = dr["Description"].ToString();
+            s.ExtraDetail = dr["ExtraDetail"].ToString();
+            s.DesiredDateTime = DateTime.FromBinary(long.Parse(dr["DesiredDateTime"].ToString()));
+            s.ShouldRemind = int.Parse(dr["ShouldRemind"].ToString()) != 0;
+            s.Id = int.Parse(dr["id"].ToString());
 
-            return t;
+            s.NumDaysBeforeNotify = int.Parse(dr["NumDaysBeforeNotify"].ToString());
+
+            return s;
         }
         #endregion
 

@@ -44,10 +44,9 @@ namespace Reminderer.Framework
             {
                 delay = dateTime - now;
             }
-            delay = TimeSpan.FromMinutes(delay.Seconds / 60);
-
-            //when debugging, delay / 60
-            TimeSpan intervalSpan = interval == 0 ? TimeSpan.FromMilliseconds(-1) : TimeSpan.FromMinutes(interval / 60);
+            delay = TimeSpan.FromMinutes(delay.TotalMinutes);
+            Console.WriteLine($"delay in minutes: {delay.TotalMinutes}");
+            TimeSpan intervalSpan = interval == 0 ? TimeSpan.FromMilliseconds(-1) : TimeSpan.FromMinutes(interval);
             var timer = new Timer(x =>
             {
                 action.Invoke();

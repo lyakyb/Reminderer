@@ -76,6 +76,21 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Description" Width="Auto" MinWidth="250" MaxWidth="350" Binding="{Binding Description}" ElementStyle="{StaticResource descriptionTextBlock}" />
                 <DataGridTextColumn Header="Time" Width="*" Binding="{Binding DesiredDateTimeText}"/>
+                <DataGridTemplateColumn Header="NotificationIcon" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Name="NotificationIcon" Source="/Images/notificationOff.png" Margin="5 5 5 5"/>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding NotificationOn}" Value="True">
+                                    <Setter TargetName="NotificationIcon" Property="Source" Value="/Images/NotificationOn.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding NotificationOn}" Value="False">
+                                    <Setter TargetName="NotificationIcon" Property="Source" Value="/Images/NotificationOff.png"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>

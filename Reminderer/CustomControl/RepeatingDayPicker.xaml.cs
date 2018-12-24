@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminderer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,55 +25,55 @@ namespace Reminderer.CustomControl
         public RepeatingDayPicker()
         {
             InitializeComponent();
-            _selectedDays = new List<int>();
+            _selectedDays = new List<Reminder.Days>();
         }
 
-        private List<int> _selectedDays;
-        public List<int> SelectedDays
+        private IList<Reminder.Days> _selectedDays;
+        public IList<Reminder.Days> SelectedDays
         {
-            get { return (List<int>)this.GetValue(SelectedDaysProperty); }
+            get { return (List<Reminder.Days>)this.GetValue(SelectedDaysProperty); }
             set
             {
                 this.SetValue(SelectedDaysProperty, value);
             }
         }
         public static readonly DependencyProperty SelectedDaysProperty = DependencyProperty.Register(
-          "SelectedDays", typeof(List<int>), typeof(RepeatingDayPicker));
+          "SelectedDays", typeof(List<Reminder.Days>), typeof(RepeatingDayPicker));
 
         private void dayClicked(object sender, RoutedEventArgs e)
         {
             var btn = sender as ToggleButton;
-            int mappedVal;
+            Reminder.Days mappedVal;
 
             switch(btn.Name)
             {
                 case "sunday":
-                    mappedVal = 0;
+                    mappedVal = Reminder.Days.Sunday;
                     break;
                 case "monday":
-                    mappedVal = 1;
+                    mappedVal = Reminder.Days.Monday;
                     break;
                 case "tuesday":
-                    mappedVal = 2;
+                    mappedVal = Reminder.Days.Tuesday;
                     break;
                 case "wednesday":
-                    mappedVal = 3;
+                    mappedVal = Reminder.Days.Wednesday;
                     break;
                 case "thursday":
-                    mappedVal = 4;
+                    mappedVal = Reminder.Days.Thursday;
                     break;
                 case "friday":
-                    mappedVal = 5;
+                    mappedVal = Reminder.Days.Friday;
                     break;
                 case "saturday":
-                    mappedVal = 6;
+                    mappedVal = Reminder.Days.Saturday;
                     break;
                 default:
-                    mappedVal = -1;
+                    mappedVal = Reminder.Days.None;
                     break;
             }
 
-            if (mappedVal == -1) return;
+            if (mappedVal == Reminder.Days.None) return;
 
             if (btn.IsChecked == true && !_selectedDays.Contains(mappedVal))
             {
@@ -83,7 +84,9 @@ namespace Reminderer.CustomControl
                 _selectedDays.Remove(mappedVal);
             }
 
+            _selectedDays = _selectedDays.OrderBy(x =>(int)x).ToList();
             SelectedDays = _selectedDays;
+            Console.WriteLine($"selectedDays: {SelectedDays}");
         }
     }
 }

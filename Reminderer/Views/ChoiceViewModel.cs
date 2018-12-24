@@ -27,8 +27,6 @@ namespace Reminderer.Views
         }
         private void executeScheduleCommand(object obj)
         {
-            Console.WriteLine("ScheduleCommand fired");
-
             Mediator.Broadcast(Constants.ShowAddEditView, false);
         }
 
@@ -44,8 +42,6 @@ namespace Reminderer.Views
         }
         private void executeRemindercommand(object obj)
         {
-            Console.WriteLine("Remindercommand fired");
-
             Mediator.Broadcast(Constants.ShowAddEditView, true);
         }
 

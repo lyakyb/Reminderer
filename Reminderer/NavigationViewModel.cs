@@ -44,7 +44,8 @@ namespace Reminderer
             Mediator.Subscribe(Constants.ShowChoiceView, ShowChoiceView);
             Mediator.Subscribe(Constants.FireNotification, FireNotification);
 
-            RemindererManager.Instance.LoadTasks();
+            RemindererManager.Instance.LoadReminders();
+            RemindererManager.Instance.LoadSchedules();
             Mediator.Broadcast(Constants.TasksUpdated);
 
             CurrentViewModel = ViewModels.First();
@@ -78,11 +79,24 @@ namespace Reminderer
             AddEditViewModel addEditVM = (AddEditViewModel)ViewModels.FirstOrDefault(viewModel => viewModel.GetType() == typeof(AddEditViewModel));
             if(obj.GetType().Name == "Task")
             {
-                addEditVM.NewTask = (Task)obj;
+                if (obj.GetType() == typeof(Reminder))
+                {
+                    addEditVM.NewTask = (Reminder)obj;
+                } else
+                {
+                    addEditVM.NewTask = (Schedule)obj;
+                }
                 addEditVM.IsEditing = true;
             }else if (obj.GetType() == typeof(bool))
             {
-                addEditVM.ReminderSelected = (bool)obj;
+                if((bool)obj)
+                {
+                    addEditVM.NewTask = new Reminder();
+                }
+                else
+                {
+                    addEditVM.NewTask = new Schedule();
+                }
             }
             ChangeViewModel(addEditVM);
         }

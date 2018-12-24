@@ -39,7 +39,7 @@ namespace Reminderer.Windows
             this.Top = desktopWorkingArea.Bottom - this.Height;
 
             var timer = new System.Threading.Timer(delegate{
-                this.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     this.Close();
                 });

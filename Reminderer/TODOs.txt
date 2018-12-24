@@ -1,4 +1,12 @@
-﻿Work on unit testing until either lol or 3pm after lunch
+﻿New models (Reminder/Schedule) which inherit Task as base class. Make the app still work with the model changes. 
+After that, refactor RemindererManager and use Repository Pattern instead. (ReminderRepository, ScheduleRepository). Then, worry about notifications.
+Maybe RM can have repositories as properties, DI into it. That way RM can maybe stay as singleton
+
+------ IDatabaseManager now has a method that returns the last insert id, which is used to set the id on a task model so it can later actually delete it after notifying
+
+
+
+Work on unit testing until either lol or 3pm after lunch
 - Mock data service
 - Db/notification stuff first
 - Ui check (ui values and task values mapped properly)l
@@ -16,7 +24,3 @@ Notification location setting
 Just make UI look nicer
 ​
 
-
-
-6. Make application not shutdown but minimize to an icon 
-7. add right mouse click options on the icon (Open/Exit)

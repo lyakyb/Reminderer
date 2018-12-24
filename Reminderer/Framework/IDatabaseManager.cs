@@ -11,6 +11,7 @@ namespace Reminderer.Framework
     {
         int InsertUpdateDelete(string sqlCommandString);
         int InsertUpdateDeleteWithParams(string sqlCommandString, Dictionary<string, object> parameters);
+        int InsertUpdateDeleteWithParamsGetLastInsertId(string sqlCommandString, Dictionary<string, object> parameters);
         DataSet ReadData(string sqlCommandString);
         void ExecuteNonQueryCommand(string sqlCommandString);
         object ExecuteScalarCommand(string sqlCommandString);

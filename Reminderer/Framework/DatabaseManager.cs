@@ -88,6 +88,36 @@ namespace Reminderer.Framework
             }
         }
 
+        public int InsertUpdateDeleteWithParamsGetLastInsertId(string sqlStringCommand, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                EnsureConnectionOpen();
+
+                _dbCmd = new SQLiteCommand
+                {
+                    Connection = _dbCon,
+                    CommandText = sqlStringCommand
+                };
+
+                foreach (KeyValuePair<string, object> pair in parameters)
+                {
+                    _dbCmd.Parameters.AddWithValue(pair.Key.ToString(), pair.Value);
+                }
+
+                _dbCmd.ExecuteNonQuery();
+                return Convert.ToInt32(_dbCon.LastInsertRowId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
+
         public DataSet ReadData(string sqlCommandString)
         {
             try

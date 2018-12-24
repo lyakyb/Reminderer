@@ -22,7 +22,7 @@ namespace Reminderer.Views
                 _newTask = value;
                 if (_newTask != null)
                     _newTask.PropertyChanged += Task_PropertyChanged;
-                ReminderSelected = value.Type == Task.TaskType.Reminder ? true : false;
+                ReminderSelected = value.GetType() == typeof(Reminder) ? true : false;
             }
         }
 
@@ -72,37 +72,52 @@ namespace Reminderer.Views
             //adding logic
             NewTask.DesiredDateTime = NewTask.DesiredDateTime.AddHours(DesiredHour);
             NewTask.DesiredDateTime = NewTask.DesiredDateTime.AddMinutes(DesiredMinute);
-            NewTask.Type = ReminderSelected ? Task.TaskType.Reminder : Task.TaskType.Schedule;
 
-            if (!NewTask.ShouldRepeat)
+            if (ReminderSelected)
             {
-                NewTask.RepeatingDays.RemoveRange(0, NewTask.RepeatingDays.Count);
-            }
+                if (!((Reminder)NewTask).ShouldRepeat)
+                {
+                   // ((Reminder)NewTask).RepeatingDays.RemoveRange(0, ((Reminder)NewTask).RepeatingDays.Count);
+                }
 
-            if (NewTask.Type == Task.TaskType.Reminder)
-            {
-                if (NewTask.IsFromSavedTime)
+                if (((Reminder)NewTask).Type == Reminder.ReminderType.IsFromSavedTime)
                 {
                     NewTask.DesiredDateTime = DateTime.Now.AddHours(DesiredHour).AddMinutes(DesiredMinute);
                 }
-            } 
-
-            if (IsEditing)
-            {
-                if (NewTask.IsAtSetInterval)
+                if (((Reminder)NewTask).Type == Reminder.ReminderType.IsAtSetInterval)
                 {
                     NewTask.DesiredDateTime = DateTime.Today.AddHours(DesiredHour).AddMinutes(DesiredMinute);
                 }
-                RemindererManager.Instance.EditTask(NewTask);
+                if (((Reminder)NewTask).Type == Reminder.ReminderType.IsAtSpecificTime)
+                {
+                    NewTask.DesiredDateTime = DateTime.Today.AddHours(DesiredHour).AddMinutes(DesiredMinute);
+                }
+
+                if (IsEditing)
+                {
+                    RemindererManager.Instance.EditReminder((Reminder)NewTask);
+                } else
+                {
+                    RemindererManager.Instance.CreateReminder((Reminder)NewTask);
+                }
             }
             else
             {
-                RemindererManager.Instance.CreateTask(NewTask);
+                if (IsEditing)
+                {
+                    RemindererManager.Instance.EditSchedule((Schedule)NewTask);
+                }
+                else
+                {
+                    RemindererManager.Instance.CreateSchedule((Schedule)NewTask);
+                }
             }
 
-
             NewTask = new Task();
+            DesiredHour = 0;
+            DesiredMinute = 0;
             IsEditing = false;
+            ReminderSelected = false;
             Mediator.Broadcast(Constants.ShowListView);    
         }
 
@@ -110,7 +125,7 @@ namespace Reminderer.Views
         {
             if (ReminderSelected)
             {
-                return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null && NewTask.ReminderSetting != 0;
+                return NewTask != null && !string.IsNullOrEmpty(NewTask.Description) && !string.IsNullOrWhiteSpace(NewTask.Description) && NewTask.DesiredDateTime != null && ((Reminder)NewTask).Type != Reminder.ReminderType.None;
                 
             } else
             {
