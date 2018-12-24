@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,7 +20,8 @@ namespace Reminderer
             base.OnStartup(e);
 
             MainWindow app = new MainWindow();
-            DatabaseManager dbM = new DatabaseManager("Test1");
+            string DB_PATH = Directory.GetCurrentDirectory();            
+            DatabaseManager dbM = new DatabaseManager($"{DB_PATH}\\Reminderer");
             NavigationViewModel context = new NavigationViewModel(dbM);
             app.DataContext = context;
             app.Show();

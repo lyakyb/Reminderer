@@ -24,6 +24,10 @@ namespace Reminderer.Framework
 
         public DatabaseManager(string dbName)
         {
+            if (!File.Exists(dbName))
+            {
+                SQLiteConnection.CreateFile(dbName);
+            }
             _dbConStringBuilder = new SQLiteConnectionStringBuilder();
             _dbConStringBuilder.DataSource = dbName;
             _dbConStringBuilder.FailIfMissing = false;
