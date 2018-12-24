@@ -22,11 +22,11 @@ namespace Reminderer
 
         public NotificationManager(IReminderRepository reminderRepository, IScheduleRepository scheduleRepository)
         {
+            _remindersNotificationList = new Dictionary<int, Timer>();
+            _schedulesNotificationList = new Dictionary<int, Timer>();
             _scheduleRepository = scheduleRepository;
             _reminderRepository = reminderRepository;
             LoadSchedulesAndReminders();
-            _remindersNotificationList = new Dictionary<int, Timer>();
-            _schedulesNotificationList = new Dictionary<int, Timer>();
             BindingOperations.EnableCollectionSynchronization(Schedules, _lock);
             BindingOperations.EnableCollectionSynchronization(Reminders, _lock);
             BindingOperations.EnableCollectionSynchronization(_remindersNotificationList, _lock);

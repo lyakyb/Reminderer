@@ -38,6 +38,22 @@ namespace RemindererTests
             Assert.True(notificationManager.Reminders[0].Type == Reminder.ReminderType.IsFromSavedTime);
         }
 
+        //[Test]
+        //public void NotificationManager_CreateReminder_ValidCall()
+        //{
+        //    Reminder r = sampleReminder;
+        //    r.Description = "Test Reminder 4";
+        //    r.Id = 4;
+        //    r.DesiredDateTime = baseTime.AddMinutes(4);
+        //    notificationManager.CreateReminder(r);
+
+        //    Assert.True(notificationManager.NotificationExistsForReminder(r));
+
+        //    r.DesiredDateTime = baseTime.AddMinutes(-5);
+
+        //    Assert.False(notificationManager.NotificationExistsForReminder(r));
+        //}
+
 
 
         private List<Schedule> GetSampleSchedules()
@@ -110,6 +126,36 @@ namespace RemindererTests
                 },
             };
 
+        }
+        private Reminder sampleReminder { get
+            {
+                return new Reminder
+                {
+                    Description = "Test Reminder 1",
+                    ExtraDetail = "Is From Save Time, 5 minutes from now",
+                    DesiredDateTime = baseTime.AddMinutes(5),
+                    Type = Reminder.ReminderType.IsFromSavedTime,
+                    Id = 1,
+                    ShouldRemind = true,
+                    ShouldRepeat = false,
+                    RepeatingDays = { },
+                };
+            }
+        }
+        private Schedule sampleSchedule
+        {
+            get
+            {
+                return new Schedule
+                {
+                    Description = "Test Schedule 1",
+                    ExtraDetail = "No notification option set",
+                    DesiredDateTime = baseTime.AddDays(5),
+                    Id = 1,
+                    NumDaysBeforeNotify = -1,
+                    ShouldRemind = false
+                };
+            }
         }
     }
 }
