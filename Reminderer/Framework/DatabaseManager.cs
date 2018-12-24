@@ -26,13 +26,6 @@ namespace Reminderer.Framework
 
             _dbCon = new SQLiteConnection();
             _dbCon.ConnectionString = _dbConStringBuilder.ConnectionString;
-
-
-            //if (!File.Exists($"{dbName}.sqlite"))
-            //{
-            //    SQLiteConnection.CreateFile($"{dbName}.sqlite");
-            //}
-
         }
 
         public int InsertUpdateDelete(string sqlCommandString)

@@ -1,5 +1,6 @@
 ﻿using Reminderer.Framework;
 using Reminderer.Models;
+using Reminderer.Repositories;
 using Reminderer.Views;
 using Reminderer.Windows;
 using System;
@@ -14,6 +15,9 @@ namespace Reminderer
 {
     class NavigationViewModel : INotifyPropertyChanged
     {
+        private IDatabaseManager _databaseManager;
+        private NotificationManager _notificationManager;
+
         private List<IRemindererViewModel> _viewModels;
         public List<IRemindererViewModel> ViewModels
         {
@@ -33,24 +37,24 @@ namespace Reminderer
             set { _currentViewModel = value; OnPropertyChanged("CurrentViewModel"); }
         }
 
-        public NavigationViewModel()
+        public NavigationViewModel(IDatabaseManager databaseManager)
         {
-            ViewModels.Add(new ScheduleListViewModel());
-            ViewModels.Add(new ChoiceViewModel());
-            ViewModels.Add(new AddEditViewModel());
+            _databaseManager = databaseManager;
+            _notificationManager = new NotificationManager(new ReminderRepository(_databaseManager), new ScheduleRepository(_databaseManager));
+
+            ViewModels.Add(new ScheduleListViewModel(_notificationManager));
+            ViewModels.Add(new ChoiceViewModel(_notificationManager));
+            ViewModels.Add(new AddEditViewModel(_notificationManager));
             
             Mediator.Subscribe(Constants.ShowListView, ShowListView);
             Mediator.Subscribe(Constants.ShowAddEditView, ShowAddEditView);
             Mediator.Subscribe(Constants.ShowChoiceView, ShowChoiceView);
             Mediator.Subscribe(Constants.FireNotification, FireNotification);
 
-            RemindererManager.Instance.LoadReminders();
-            RemindererManager.Instance.LoadSchedules();
             Mediator.Broadcast(Constants.TasksUpdated);
 
             CurrentViewModel = ViewModels.First();
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -87,7 +91,8 @@ namespace Reminderer
                     addEditVM.NewTask = (Schedule)obj;
                 }
                 addEditVM.IsEditing = true;
-            }else if (obj.GetType() == typeof(bool))
+            }
+            else if (obj.GetType() == typeof(bool))
             {
                 if((bool)obj)
                 {

@@ -3,6 +3,7 @@ using Reminderer.Models;
 using System;
 using Reminderer.Framework;
 using Reminderer.Commands;
+using Reminderer.Repositories;
 
 namespace Reminderer.Views
 {
@@ -11,9 +12,13 @@ namespace Reminderer.Views
         private IList<Task> _tasks;
         private IList<Reminder> _reminders;
         private IList<Schedule> _schedules;
-        
-        public ScheduleListViewModel()
+
+        private NotificationManager _notificationManager;
+
+        public ScheduleListViewModel(NotificationManager notificationManager)
         {
+            _notificationManager = notificationManager;
+
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
             EditCommand = new DelegateCommand(executeEditCommand, canExecuteEditCommand);
             DeleteCommand = new DelegateCommand(executeDeleteCommand, canExecuteDeleteCommand);
@@ -65,11 +70,11 @@ namespace Reminderer.Views
             if (obj == null) return;
             if (obj.GetType() == typeof(Reminder))
             {
-                RemindererManager.Instance.DeleteReminder((Reminder)obj);
+                _notificationManager.DeleteReminder((Reminder)obj);
             }
             else if (obj.GetType() == typeof(Schedule))
             {
-                RemindererManager.Instance.DeleteSchedule((Schedule)obj);
+                _notificationManager.DeleteSchedule((Schedule)obj);
             }
         }
 
@@ -80,23 +85,20 @@ namespace Reminderer.Views
 
         private void tasksUpdated(object obj = null)
         {
-            Schedules = RemindererManager.Instance.Schedules;
-            Reminders = RemindererManager.Instance.Reminders;
+            Schedules = _notificationManager.Schedules;
+            Reminders = _notificationManager.Reminders;
         }
-
 
         public IList<Task> Tasks
         {
             get { return _tasks; }
             set { _tasks = value; }
         }
-
         public IList<Reminder> Reminders
         {
             get { return _reminders; }
             set { _reminders = value; OnPropertyChanged("Reminders"); }
         }
-
         public IList<Schedule> Schedules
         {
             get { return _schedules; }

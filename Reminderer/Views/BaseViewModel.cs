@@ -1,4 +1,5 @@
 ﻿using Reminderer.Framework;
+using Reminderer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +12,16 @@ namespace Reminderer.Views
 {
     abstract class BaseViewModel : INotifyPropertyChanged
     {
+        private NotificationManager _notificationManager;
+
+        public BaseViewModel(NotificationManager notificationManager)
+        {
+            _notificationManager = notificationManager;
+        }
+
         public BaseViewModel()
         {
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

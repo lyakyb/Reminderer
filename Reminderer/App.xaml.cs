@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminderer.Framework;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -18,7 +19,8 @@ namespace Reminderer
             base.OnStartup(e);
 
             MainWindow app = new MainWindow();
-            NavigationViewModel context = new NavigationViewModel();
+            DatabaseManager dbM = new DatabaseManager("Test1");
+            NavigationViewModel context = new NavigationViewModel(dbM);
             app.DataContext = context;
             app.Show();
         }

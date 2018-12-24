@@ -88,8 +88,11 @@
     <Compile Include="Models\Reminder.cs" />
     <Compile Include="Models\Schedule.cs" />
     <Compile Include="NavigationViewModel.cs" />
-    <Compile Include="RemindererManager.cs" />
-    <Compile Include="Repositories\ITasksRepository.cs" />
+    <Compile Include="NotificationManager.cs" />
+    <Compile Include="Repositories\IReminderRepository.cs" />
+    <Compile Include="Repositories\IScheduleRepository.cs" />
+    <Compile Include="Repositories\ReminderRepository.cs" />
+    <Compile Include="Repositories\ScheduleRepository.cs" />
     <Compile Include="Views\AddEditView.xaml.cs">
       <DependentUpon>AddEditView.xaml</DependentUpon>
     </Compile>

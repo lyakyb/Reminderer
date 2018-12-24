@@ -7,11 +7,16 @@ using Reminderer.Models;
 using System.Windows.Input;
 using System.ComponentModel;
 using Reminderer.Framework;
+using Reminderer.Repositories;
 
 namespace Reminderer.Views
 {
     class AddEditViewModel : BaseViewModel, IRemindererViewModel
     {
+        public List<int> NumDaysOptions
+        {
+            get { return new List<int>{ 1,2,3,4,5,6,7}; }
+        }
         private Task _newTask;
         public Task NewTask
         {
@@ -25,17 +30,10 @@ namespace Reminderer.Views
                 ReminderSelected = value.GetType() == typeof(Reminder) ? true : false;
             }
         }
-
-        public List<int> NumDaysOptions
-        {
-            get { return new List<int>{ 1,2,3,4,5,6,7}; }
-        }
-
         private int _desiredHour;
         public int DesiredHour { get { return _desiredHour; } set { _desiredHour = value; } }
         private int _desiredMinute;
         public int DesiredMinute { get { return _desiredMinute; } set { _desiredMinute = value; } }
-
         private bool _isEditing;
         public bool IsEditing
         {
@@ -49,13 +47,17 @@ namespace Reminderer.Views
             set { _reminderSelected = value; }
         }
 
+        private NotificationManager _notificationManager;
+
         public void Task_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             AddCommand.RaiseCanExecuteChanged();
         }
         
-        public AddEditViewModel()
+        public AddEditViewModel(NotificationManager notificationManager)
         {
+            _notificationManager = notificationManager;
+
             ReminderSelected = false;
             AddCommand = new DelegateCommand(executeAddCommand, canExecuteAdd);
             NewTask = new Task();
@@ -95,21 +97,21 @@ namespace Reminderer.Views
 
                 if (IsEditing)
                 {
-                    RemindererManager.Instance.EditReminder((Reminder)NewTask);
+                    _notificationManager.EditReminder((Reminder)NewTask);
                 } else
                 {
-                    RemindererManager.Instance.CreateReminder((Reminder)NewTask);
+                    _notificationManager.CreateReminder((Reminder)NewTask);
                 }
             }
             else
             {
                 if (IsEditing)
                 {
-                    RemindererManager.Instance.EditSchedule((Schedule)NewTask);
+                    _notificationManager.EditSchedule((Schedule)NewTask);
                 }
                 else
                 {
-                    RemindererManager.Instance.CreateSchedule((Schedule)NewTask);
+                    _notificationManager.CreateSchedule((Schedule)NewTask);
                 }
             }
 

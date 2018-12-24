@@ -1,5 +1,6 @@
 ﻿using Reminderer.Commands;
 using Reminderer.Framework;
+using Reminderer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,11 @@ namespace Reminderer.Views
 {
     class ChoiceViewModel : BaseViewModel, IRemindererViewModel
     {
-        public ChoiceViewModel(){
+        private NotificationManager _notificationManager;
+
+        public ChoiceViewModel(NotificationManager notificationManager){
+            _notificationManager = notificationManager;
+
             ScheduleCommand = new DelegateCommand(executeScheduleCommand, canExecuteSchedule);
             ReminderCommand = new DelegateCommand(executeRemindercommand, canExecuteReminder);
         }
