@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Reminderer.Framework
 {
-    interface IDatabaseManager
+    public interface IDatabaseManager
     {
         int InsertUpdateDelete(string sqlCommandString);
         int InsertUpdateDeleteWithParams(string sqlCommandString, Dictionary<string, object> parameters);

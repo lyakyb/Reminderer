@@ -9,7 +9,7 @@ using Reminderer.Models;
 
 namespace Reminderer.Repositories
 {
-    class ReminderRepository : IReminderRepository
+    public class ReminderRepository : IReminderRepository
     {
         private readonly IDatabaseManager _databaseManager;
         private int _lastInsertedId;

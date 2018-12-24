@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Reminderer.Framework
 {
-    class DatabaseManager : IDatabaseManager
+    public class DatabaseManager : IDatabaseManager
     {
         private SQLiteConnection _dbCon;
         private SQLiteCommand _dbCmd;
@@ -16,6 +16,11 @@ namespace Reminderer.Framework
 
 
         public SQLiteConnection DbConnection { get { return _dbCon; } }
+
+        public DatabaseManager()
+        {
+
+        }
 
         public DatabaseManager(string dbName)
         {

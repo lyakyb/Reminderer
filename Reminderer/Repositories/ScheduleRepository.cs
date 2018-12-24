@@ -9,7 +9,7 @@ using Reminderer.Models;
 
 namespace Reminderer.Repositories
 {
-    class ScheduleRepository : IScheduleRepository
+    public class ScheduleRepository : IScheduleRepository
     {
         private readonly IDatabaseManager _databaseManager;
 
