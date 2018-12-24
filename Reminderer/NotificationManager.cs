@@ -25,10 +25,12 @@ namespace Reminderer
             _scheduleRepository = scheduleRepository;
             _reminderRepository = reminderRepository;
             LoadSchedulesAndReminders();
-            _taskNotificationDict = new Dictionary<int, Timer>();
+            _remindersNotificationList = new Dictionary<int, Timer>();
+            _schedulesNotificationList = new Dictionary<int, Timer>();
             BindingOperations.EnableCollectionSynchronization(Schedules, _lock);
             BindingOperations.EnableCollectionSynchronization(Reminders, _lock);
-            BindingOperations.EnableCollectionSynchronization(_taskNotificationDict, _lock);
+            BindingOperations.EnableCollectionSynchronization(_remindersNotificationList, _lock);
+            BindingOperations.EnableCollectionSynchronization(_schedulesNotificationList, _lock);
 
 
             updateTasksToNotifyList();
@@ -53,7 +55,8 @@ namespace Reminderer
             get { return _reminders; }
             set { _reminders = value; }
         }
-        private Dictionary<int, Timer> _taskNotificationDict;
+        private Dictionary<int, Timer> _remindersNotificationList;
+        private Dictionary<int, Timer> _schedulesNotificationList;
 
 
         #endregion
@@ -82,20 +85,11 @@ namespace Reminderer
             }
         }
 
-        private void RemoveFromNotifyList(int taskId)
-        {
-            if (_taskNotificationDict.ContainsKey(taskId))
-            {
-                _taskNotificationDict[taskId].Dispose();
-                _taskNotificationDict.Remove(taskId);
-            }
-        }
-
         private void RemoveFromNotifyListIfNeeded(Task task)
         {
-            if (_taskNotificationDict.ContainsKey(task.Id))
+            if (task.GetType() == typeof(Reminder))
             {
-                if (task.GetType() == typeof(Reminder))
+                if(_remindersNotificationList.ContainsKey(task.Id))
                 {
                     if (((Reminder)task).Type == Reminder.ReminderType.IsAtSetInterval ||
                         (((Reminder)task).Type == Reminder.ReminderType.IsAtSpecificTime && ((Reminder)task).RepeatingDays.Count > 0))
@@ -105,16 +99,21 @@ namespace Reminderer
                     var r = Reminders.Where(x => x.Id == task.Id).ToList().FirstOrDefault();
                     Reminders.Remove(r);
                     DeleteReminder((Reminder)task);
+                    _remindersNotificationList.Remove(task.Id);
+                }
 
-                } else if (task.GetType() == typeof(Schedule))
+            } else if (task.GetType() == typeof(Schedule))
+            {
+                if (_schedulesNotificationList.ContainsKey(task.Id))
                 {
                     if (task.DesiredDateTime > DateTime.Now) return;
                     Schedules.Where(x => x.Id == task.Id).ToList().All(x => Schedules.Remove(x));
                     DeleteSchedule((Schedule)task);
+                    _schedulesNotificationList.Remove(task.Id);
                 }
-                RemoveFromNotifyList(task.Id);
-                task.NotificationOn = false;
             }
+            task.NotificationOn = false;
+            
         }
 
         private void AddToNotifyIfNeeded(Task task)
@@ -160,7 +159,7 @@ namespace Reminderer
                 Mediator.Broadcast(Constants.FireNotification, task);
                 RemoveFromNotifyListIfNeeded(task);
             });
-            _taskNotificationDict[task.Id] = timer;
+            _schedulesNotificationList[task.Id] = timer;
             task.NotificationOn = true;
         }
         private void NotifyFromNow(Task task)
@@ -182,9 +181,20 @@ namespace Reminderer
                 Mediator.Broadcast(Constants.FireNotification, task);
                 RemoveFromNotifyListIfNeeded(task);
             });
-            _taskNotificationDict[task.Id] = timer;
+            _remindersNotificationList[task.Id] = timer;
             task.NotificationOn = true;
         }
+
+        public bool NotificationExistsForReminder(Reminder r)
+        {
+            return _remindersNotificationList.ContainsKey(r.Id);
+        }
+
+        public bool NotificationExistsForSchedule(Schedule s)
+        {
+            return _schedulesNotificationList.ContainsKey(s.Id);
+        }
+
         #endregion
 
         #region Database Related Methods
@@ -201,13 +211,13 @@ namespace Reminderer
         {
             Reminders.Remove(reminder);
             DeleteReminderWithId(reminder.Id.ToString());
-            RemoveFromNotifyList(reminder.Id);
+            RemoveFromNotifyListIfNeeded(reminder);
         }
         public void DeleteSchedule(Schedule schedule)
         {
             Schedules.Remove(schedule);
             DeleteScheduleWithId(schedule.Id.ToString());
-            RemoveFromNotifyList(schedule.Id);
+            RemoveFromNotifyListIfNeeded(schedule);
         }
         private void DeleteReminderWithId(string id)
         {
@@ -216,7 +226,7 @@ namespace Reminderer
                 Id = int.Parse(id)
             };
             _reminderRepository.Delete(r);
-            RemoveFromNotifyList(int.Parse(id));
+            RemoveFromNotifyListIfNeeded(r);
         }
         private void DeleteScheduleWithId(string id)
         {
@@ -225,21 +235,21 @@ namespace Reminderer
                 Id = int.Parse(id)
             };
             _scheduleRepository.Delete(s);
-            RemoveFromNotifyList(int.Parse(id));
+            RemoveFromNotifyListIfNeeded(s);
         }
 
         public void EditReminder(Reminder reminder)
         {
             Reminder prevReminder = Reminders.Where(r => r.Id == reminder.Id).FirstOrDefault();
             _reminderRepository.Update(reminder);
-            RemoveFromNotifyList(reminder.Id);
+            RemoveFromNotifyListIfNeeded(reminder);
             AddToNotifyIfNeeded(reminder);
         }
         public void EditSchedule(Schedule schedule)
         {
             Schedule prevSchedule = Schedules.Where(s => s.Id == schedule.Id).FirstOrDefault();
             _scheduleRepository.Update(schedule);
-            RemoveFromNotifyList(schedule.Id);
+            RemoveFromNotifyListIfNeeded(schedule);
             AddToNotifyIfNeeded(schedule);
         }
 
@@ -255,10 +265,6 @@ namespace Reminderer
             _scheduleRepository.Add(schedule);
             AddToNotifyIfNeeded(schedule);
         }
-
-
-        
-        
         #endregion
 
     }
