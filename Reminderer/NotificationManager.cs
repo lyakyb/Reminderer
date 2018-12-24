@@ -211,13 +211,11 @@ namespace Reminderer
         {
             Reminders.Remove(reminder);
             DeleteReminderWithId(reminder.Id.ToString());
-            RemoveFromNotifyListIfNeeded(reminder);
         }
         public void DeleteSchedule(Schedule schedule)
         {
             Schedules.Remove(schedule);
             DeleteScheduleWithId(schedule.Id.ToString());
-            RemoveFromNotifyListIfNeeded(schedule);
         }
         private void DeleteReminderWithId(string id)
         {
@@ -226,7 +224,6 @@ namespace Reminderer
                 Id = int.Parse(id)
             };
             _reminderRepository.Delete(r);
-            RemoveFromNotifyListIfNeeded(r);
         }
         private void DeleteScheduleWithId(string id)
         {
@@ -235,7 +232,6 @@ namespace Reminderer
                 Id = int.Parse(id)
             };
             _scheduleRepository.Delete(s);
-            RemoveFromNotifyListIfNeeded(s);
         }
 
         public void EditReminder(Reminder reminder)
