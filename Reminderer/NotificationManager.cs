@@ -234,15 +234,21 @@ namespace Reminderer
         public void DeleteReminder(Reminder reminder)
         {
             Reminders.Remove(reminder);
-            _remindersNotificationList[reminder.Id].Change(Timeout.Infinite, Timeout.Infinite);
-            _remindersNotificationList.Remove(reminder.Id);
+            if (_remindersNotificationList.ContainsKey(reminder.Id))
+            {
+                _remindersNotificationList[reminder.Id].Change(Timeout.Infinite, Timeout.Infinite);
+                _remindersNotificationList.Remove(reminder.Id);
+            }
             DeleteReminderWithId(reminder.Id.ToString());
         }
         public void DeleteSchedule(Schedule schedule)
         {
             Schedules.Remove(schedule);
-            _schedulesNotificationList[schedule.Id].Change(Timeout.Infinite, Timeout.Infinite);
-            _schedulesNotificationList.Remove(schedule.Id);
+            if (_schedulesNotificationList.ContainsKey(schedule.Id))
+            {
+                _schedulesNotificationList[schedule.Id].Change(Timeout.Infinite, Timeout.Infinite);
+                _schedulesNotificationList.Remove(schedule.Id);
+            }
             DeleteScheduleWithId(schedule.Id.ToString());
         }
         private void DeleteReminderWithId(string id)
