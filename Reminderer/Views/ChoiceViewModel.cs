@@ -18,6 +18,23 @@ namespace Reminderer.Views
 
             ScheduleCommand = new DelegateCommand(executeScheduleCommand, canExecuteSchedule);
             ReminderCommand = new DelegateCommand(executeRemindercommand, canExecuteReminder);
+            BackCommand = new DelegateCommand(executeBackCommand, canExecuteBack);
+
+        }
+
+        private DelegateCommand _backCommand;
+        public DelegateCommand BackCommand
+        {
+            get { return _backCommand; }
+            set { _backCommand = value; }
+        }
+        private bool canExecuteBack(object obj)
+        {
+            return true;
+        }
+        private void executeBackCommand(object obj)
+        {
+            Mediator.Broadcast(Constants.ShowListView);
         }
 
         private DelegateCommand _scheduleCommand;

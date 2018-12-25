@@ -20,7 +20,8 @@ namespace Reminderer
             base.OnStartup(e);
 
             MainWindow app = new MainWindow();
-            string DB_PATH = Directory.GetCurrentDirectory();            
+            var directoryInfo = Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "MyReminderer"));
+            string DB_PATH = directoryInfo.FullName;            
             DatabaseManager dbM = new DatabaseManager($"{DB_PATH}\\Reminderer");
             NavigationViewModel context = new NavigationViewModel(dbM);
             app.DataContext = context;

@@ -38,6 +38,12 @@ namespace Reminderer
 
             System.Windows.Forms.ContextMenu cm = new System.Windows.Forms.ContextMenu();
             
+            cm.MenuItems.Add("Show Reminder/Schedule List", (s, e) =>
+            {
+                Mediator.Broadcast(Constants.ShowListView);
+                this.Show();
+                this.WindowState = WindowState.Normal;
+            });
             cm.MenuItems.Add("Exit", (s,e)=>
             {
                 System.Windows.Application.Current.Shutdown();
