@@ -132,7 +132,7 @@ namespace Reminderer
                     NotifyAtThisTime(task);
                 }
 
-            } else if (task.GetType() == typeof(Schedule) && task.ShouldRemind)
+            } else if (task.GetType() == typeof(Schedule) && task.ShouldRemind && ((Schedule)task).ShouldNotifyToday())
             {
                 NotifyForSchedule(task);
             }
@@ -154,7 +154,7 @@ namespace Reminderer
 
         private void NotifyForSchedule(Task task)
         {
-            var timer = TimerService.instance.ScheduleTaskFromNow(0, 1, () =>
+            var timer = TimerService.instance.ScheduleTaskFromNow(1, 0, () =>
             {
                 Mediator.Broadcast(Constants.FireNotification, task);
                 RemoveFromNotifyListIfNeeded(task);
