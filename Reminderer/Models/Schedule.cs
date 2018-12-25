@@ -37,7 +37,7 @@ namespace Reminderer.Models
                 }
                 else
                 {
-                    return $"D-{t.Days}";
+                    return $"D-{t.Days + 1}";
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace Reminderer.Models
             {
                 if (ShouldRemind && NumDaysBeforeNotify >= 0)
                 {
-                    return $"Notifying {NumDaysBeforeNotify + 1} days before D-Day";
+                    return $"Notifying {NumDaysBeforeNotify} days before D-Day";
                 }
 
                 return "You did not request notification for this schedule";
