@@ -99,7 +99,6 @@ namespace Reminderer
                     var r = Reminders.Where(x => x.Id == task.Id).ToList().FirstOrDefault();
                     Reminders.Remove(r);
                     DeleteReminder((Reminder)task);
-                    _remindersNotificationList.Remove(task.Id);
                 }
 
             } else if (task.GetType() == typeof(Schedule))
@@ -109,7 +108,6 @@ namespace Reminderer
                     if (task.DesiredDateTime > DateTime.Now) return;
                     Schedules.Where(x => x.Id == task.Id).ToList().All(x => Schedules.Remove(x));
                     DeleteSchedule((Schedule)task);
-                    _schedulesNotificationList.Remove(task.Id);
                 }
             }
             task.NotificationOn = false;
@@ -195,6 +193,32 @@ namespace Reminderer
             return _schedulesNotificationList.ContainsKey(s.Id);
         }
 
+        public void TurnOnNotificationForReminder(Reminder r)
+        {
+            AddToNotifyIfNeeded(r);
+        }
+        public void TurnOnNotificationForSchedule(Schedule s)
+        {
+            AddToNotifyIfNeeded(s);
+        }
+        public void TurnOffNotificationForReminder(Reminder r)
+        {
+            if(_remindersNotificationList.ContainsKey(r.Id))
+            {
+                _remindersNotificationList[r.Id].Change(Timeout.Infinite, Timeout.Infinite);
+                _remindersNotificationList.Remove(r.Id);
+                r.NotificationOn = false;
+            }
+        }
+        public void TurnOffNotificationForSchedule(Schedule s)
+        {
+            if (_schedulesNotificationList.ContainsKey(s.Id))
+            {
+                _schedulesNotificationList[s.Id].Change(Timeout.Infinite, Timeout.Infinite);
+                _schedulesNotificationList.Remove(s.Id);
+                s.NotificationOn = false;
+            }
+        }
         #endregion
 
         #region Database Related Methods
@@ -210,12 +234,14 @@ namespace Reminderer
         public void DeleteReminder(Reminder reminder)
         {
             Reminders.Remove(reminder);
+            _remindersNotificationList[reminder.Id].Change(Timeout.Infinite, Timeout.Infinite);
             _remindersNotificationList.Remove(reminder.Id);
             DeleteReminderWithId(reminder.Id.ToString());
         }
         public void DeleteSchedule(Schedule schedule)
         {
             Schedules.Remove(schedule);
+            _schedulesNotificationList[schedule.Id].Change(Timeout.Infinite, Timeout.Infinite);
             _schedulesNotificationList.Remove(schedule.Id);
             DeleteScheduleWithId(schedule.Id.ToString());
         }

@@ -22,10 +22,48 @@ namespace Reminderer.Views
             NewTaskCommand = new DelegateCommand(executeNewTaskCommand, canExecuteNewTask);
             EditCommand = new DelegateCommand(executeEditCommand, canExecuteEditCommand);
             DeleteCommand = new DelegateCommand(executeDeleteCommand, canExecuteDeleteCommand);
+            ToggleNotificationCommand = new DelegateCommand(executeToggleNotificationCommand, canExecuteToggleNotificationCommand);
+            
 
             tasksUpdated();
 
             Mediator.Subscribe(Constants.TasksUpdated, tasksUpdated);
+        }
+
+        private DelegateCommand _toggleNotificationCommand;
+        public DelegateCommand ToggleNotificationCommand
+        {
+            get { return _toggleNotificationCommand; }
+            set { _toggleNotificationCommand = value; }
+        }
+        private void executeToggleNotificationCommand(object obj)
+        {
+            if (obj == null) return;
+            if (obj.GetType() == typeof(Reminder))
+            {
+                if(((Reminder)obj).NotificationOn)
+                {
+                    _notificationManager.TurnOffNotificationForReminder((Reminder)obj);
+                } else
+                {
+                    _notificationManager.TurnOnNotificationForReminder((Reminder)obj);
+                }
+            }
+            else if (obj.GetType() == typeof(Schedule))
+            {
+                if (((Schedule)obj).NotificationOn)
+                {
+                    _notificationManager.TurnOffNotificationForSchedule((Schedule)obj);
+                }
+                else
+                {
+                    _notificationManager.TurnOnNotificationForSchedule((Schedule)obj);
+                }
+            }
+        }
+        private bool canExecuteToggleNotificationCommand(object obj)
+        {
+            return true;
         }
 
         private DelegateCommand _newTaskCommand;
