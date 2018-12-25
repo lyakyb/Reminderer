@@ -210,11 +210,13 @@ namespace Reminderer
         public void DeleteReminder(Reminder reminder)
         {
             Reminders.Remove(reminder);
+            _remindersNotificationList.Remove(reminder.Id);
             DeleteReminderWithId(reminder.Id.ToString());
         }
         public void DeleteSchedule(Schedule schedule)
         {
             Schedules.Remove(schedule);
+            _schedulesNotificationList.Remove(schedule.Id);
             DeleteScheduleWithId(schedule.Id.ToString());
         }
         private void DeleteReminderWithId(string id)
